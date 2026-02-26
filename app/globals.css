@@ -1,0 +1,383 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Deep Space Palette (Light Mode - mostly for fallback, we want dark mode default) */
+    --background: 236 17% 8%;
+    /* #0B0C15 */
+    --foreground: 210 20% 92%;
+    /* #E2E8F0 */
+    --card: 235 24% 10%;
+    /* #13141F */
+    --card-foreground: 210 20% 92%;
+    /* #E2E8F0 */
+    --popover: 235 24% 10%;
+    /* #13141F */
+    --popover-foreground: 210 20% 92%;
+    /* #E2E8F0 */
+    --primary: 226 100% 73%;
+    /* #7595FF */
+    --primary-foreground: 236 17% 8%;
+    /* #0B0C15 */
+    --secondary: 233 23% 15%;
+    /* #1E2030 */
+    --secondary-foreground: 210 20% 92%;
+    /* #E2E8F0 */
+    --muted: 233 23% 15%;
+    /* #1E2030 */
+    --muted-foreground: 215 16% 65%;
+    /* #94A3B8 */
+    --accent: 230 19% 22%;
+    /* #2D3142 */
+    --accent-foreground: 210 20% 92%;
+    /* #E2E8F0 */
+    --destructive: 0 84% 60%;
+    /* #EF4444 */
+    --destructive-foreground: 210 40% 98%;
+    --border: 230 19% 22%;
+    /* #2D3142 */
+    --input: 233 23% 15%;
+    /* #1E2030 */
+    --ring: 226 100% 73%;
+    /* #7595FF */
+    --radius: 1rem;
+  }
+
+  .dark {
+    /* Deep Space Palette (Dark Mode - Primary) */
+    --background: 236 17% 8%;
+    /* #0B0C15 */
+    --foreground: 210 20% 92%;
+    /* #E2E8F0 */
+    --card: 235 24% 10%;
+    /* #13141F */
+    --card-foreground: 210 20% 92%;
+    /* #E2E8F0 */
+    --popover: 235 24% 10%;
+    /* #13141F */
+    --popover-foreground: 210 20% 92%;
+    /* #E2E8F0 */
+    --primary: 226 100% 73%;
+    /* #7595FF */
+    --primary-foreground: 236 17% 8%;
+    /* #0B0C15 */
+    --secondary: 233 23% 15%;
+    /* #1E2030 */
+    --secondary-foreground: 210 20% 92%;
+    /* #E2E8F0 */
+    --muted: 233 23% 15%;
+    /* #1E2030 */
+    --muted-foreground: 215 16% 65%;
+    /* #94A3B8 */
+    --accent: 230 19% 22%;
+    /* #2D3142 */
+    --accent-foreground: 210 20% 92%;
+    /* #E2E8F0 */
+    --destructive: 0 84% 60%;
+    /* #EF4444 */
+    --destructive-foreground: 210 40% 98%;
+    --border: 230 19% 22%;
+    /* #2D3142 */
+    --input: 233 23% 15%;
+    /* #1E2030 */
+    --ring: 226 100% 73%;
+    /* #7595FF */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .phantom-card {
+    @apply bg-card border border-border/50 shadow-xl shadow-black/5 dark:shadow-black/50 transition-colors duration-300;
+  }
+
+  .phantom-input {
+    @apply bg-input/30 border border-white/5 focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all duration-200 text-foreground placeholder:text-muted-foreground/50;
+  }
+
+  .phantom-button {
+    @apply bg-primary hover:bg-primary/90 text-white font-semibold shadow-lg shadow-primary/20 transition-all duration-200 active:scale-[0.98];
+  }
+
+  .phantom-button-secondary {
+    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium transition-all duration-200;
+  }
+
+  .mesh-gradient {
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(at 0% 0%, hsla(226, 100%, 73%, 0.08) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(260, 100%, 73%, 0.08) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, hsla(240, 100%, 73%, 0.05) 0px, transparent 50%);
+  }
+}
+
+/* Code block styling */
+pre {
+  @apply overflow-x-auto;
+}
+
+code {
+  @apply font-mono text-sm;
+}
+
+/* =============================================
+   Syntax Highlighting — Deep Space Dracula+
+   ============================================= */
+
+.hljs {
+  background: transparent;
+  color: #f8f8f2;
+}
+
+/* Keywords: import, export, const, let, await, async, return, if, from... */
+.hljs-keyword,
+.hljs-operator {
+  color: #ff79c6;
+}
+
+/* Built-in types, global objects: string, number, Promise, console... */
+.hljs-built_in,
+.hljs-type {
+  color: #8be9fd;
+}
+
+/* Class names, constructor names */
+.hljs-title.class_,
+.hljs-class .hljs-title {
+  color: #8be9fd;
+}
+
+/* Function names */
+.hljs-title.function_,
+.hljs-function > .hljs-title,
+.hljs-function .hljs-title {
+  color: #50fa7b;
+}
+
+/* Literal values: true, false, null, undefined */
+.hljs-literal {
+  color: #bd93f9;
+}
+
+/* Numbers */
+.hljs-number {
+  color: #bd93f9;
+}
+
+/* Strings (both single and template) */
+.hljs-string,
+.hljs-template-string {
+  color: #f1fa8c;
+}
+
+/* Template literal variables: ${...} */
+.hljs-template-variable,
+.hljs-subst {
+  color: #ffb86c;
+}
+
+/* Comments */
+.hljs-comment {
+  color: #6272a4;
+  font-style: italic;
+}
+
+/* Object/destructuring variable names */
+.hljs-variable,
+.hljs-variable.language_ {
+  color: #f8f8f2;
+}
+
+/* Object property keys */
+.hljs-property,
+.hljs-attr {
+  color: #8be9fd;
+}
+
+/* Params (function arguments) */
+.hljs-params {
+  color: #ffb86c;
+}
+
+/* Punctuation: . , ; ( ) { } [ ] */
+.hljs-punctuation {
+  color: #6272a4;
+}
+
+/* Regex */
+.hljs-regexp {
+  color: #f1fa8c;
+}
+
+/* Meta: decorators, annotations */
+.hljs-meta,
+.hljs-meta .hljs-keyword {
+  color: #ff79c6;
+}
+
+/* Section / namespace */
+.hljs-section {
+  color: #50fa7b;
+  font-weight: 600;
+}
+
+/* Bash-specific */
+.hljs-name {
+  color: #50fa7b;
+}
+
+/* Diff additions/deletions */
+.hljs-addition {
+  color: #50fa7b;
+  background: rgba(80, 250, 123, 0.08);
+}
+
+.hljs-deletion {
+  color: #ff5555;
+  background: rgba(255, 85, 85, 0.08);
+}
+
+/* =============================================
+   Glassmorphism utilities
+   ============================================= */
+
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* =============================================
+   Hero animations
+   ============================================= */
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50%       { opacity: 0.60; transform: scale(1.05); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-16px); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 7s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Slider custom styling */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, #7595FF var(--pct, 30%), rgba(255,255,255,0.08) 0%);
+}
+
+input[type='range']::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.08);
+}
+
+input[type='range']::-moz-range-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: #7595FF;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #7595FF;
+  border: 2px solid #fff;
+  margin-top: -7px;
+  box-shadow: 0 0 0 3px rgba(117,149,255,0.25);
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+input[type='range']::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 5px rgba(117,149,255,0.35);
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #7595FF;
+  border: 2px solid #fff;
+  cursor: pointer;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2A2B35;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3A3B45;
+}
