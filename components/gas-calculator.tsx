@@ -253,12 +253,12 @@ export function GasCalculator({ compact = false }: { compact?: boolean }) {
                     <div className="rounded-lg border border-white/[0.08] bg-white/[0.03] p-3">
                       <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Gas Used</p>
                       <p className="font-mono text-white text-sm">e.g. <span className="text-[#f1fa8c]">24</span></p>
-                      <p className="text-[11px] text-gray-600 mt-1">Labeled "gas_used" in the raw JSON or "Gas" in the UI</p>
+                      <p className="text-[11px] text-gray-600 mt-1">Labeled &quot;gas_used&quot; in the raw JSON or &quot;Gas&quot; in the UI</p>
                     </div>
                     <div className="rounded-lg border border-white/[0.08] bg-white/[0.03] p-3">
                       <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Gas Unit Price</p>
                       <p className="font-mono text-white text-sm">e.g. <span className="text-[#f1fa8c]">100</span></p>
-                      <p className="text-[11px] text-gray-600 mt-1">Labeled "gas_unit_price" — usually 100 octas</p>
+                      <p className="text-[11px] text-gray-600 mt-1">Labeled &quot;gas_unit_price&quot; — usually 100 octas</p>
                     </div>
                   </div>
                 </Step>

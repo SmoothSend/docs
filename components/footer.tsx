@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { Github, Twitter } from 'lucide-react'
 import Image from 'next/image'
 
 export function Footer() {

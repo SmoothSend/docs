@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Check, Copy, Package } from 'lucide-react'
+import { Check, Package } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'

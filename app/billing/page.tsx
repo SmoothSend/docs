@@ -206,7 +206,7 @@ export default function BillingPage() {
               <p className="text-sm text-gray-400">
                 Mainnet wallet adapter transactions will fail until you top up.
                 Testnet always works for free. Script Composer is unaffected since it
-                doesn't use credits.
+                doesn&apos;t use credits.
               </p>
             </div>
             <div className="py-4">

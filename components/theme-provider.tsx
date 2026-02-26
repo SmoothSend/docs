@@ -10,7 +10,7 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children, defaultTheme = "dark" }: ThemeProviderProps) {
-  const [theme, setTheme] = React.useState<Theme>(defaultTheme)
+  const [theme] = React.useState<Theme>(defaultTheme)
 
   React.useEffect(() => {
     const root = window.document.documentElement
