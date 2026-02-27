@@ -14,6 +14,7 @@ const navItems = [
   { href: '/aptos/api-reference', label: 'API Reference' },
   { href: '/aptos/examples', label: 'Examples' },
   { href: '/billing', label: 'Pricing' },
+  { href: '/mcp', label: 'MCP' },
 ]
 
 export function Navigation() {

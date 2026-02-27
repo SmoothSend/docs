@@ -9,6 +9,7 @@
 - Testnet is always free. Mainnet fee is $0.01 minimum per transaction.
 - Secure by default: API key auth, rate limiting, gateway-level validation on every request
 - Multi-chain roadmap: Aptos live now, EVM and Stellar coming soon
+- MCP server available: `@smoothsend/mcp` on npm — gives AI assistants (Cursor, Claude Desktop, Windsurf) full SDK context
 
 ## Documentation
 
@@ -18,6 +19,7 @@
 - [API Reference](https://docs.smoothsend.xyz/aptos/api-reference): Full API reference for SmoothSendTransactionSubmitter and ScriptComposerClient
 - [Examples](https://docs.smoothsend.xyz/aptos/examples): Real-world code examples for wallet adapter setup, USDC transfers, fee previews, and error handling
 - [Pricing](https://docs.smoothsend.xyz/billing): Credit-based pricing details and interactive gas calculator
+- [MCP Server](https://docs.smoothsend.xyz/mcp): MCP server for AI assistants (Cursor, Claude Desktop, Windsurf) — install `@smoothsend/mcp` from npm
 - [Dashboard](https://dashboard.smoothsend.xyz): Manage API keys, top up credits, monitor usage
 
 ## Integration Summary
