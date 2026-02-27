@@ -1,0 +1,111 @@
+# SmoothSend
+
+> SmoothSend is a gasless transaction infrastructure platform for Aptos. It lets dApp developers sponsor gas fees for their users — users sign transactions normally but never pay gas. Live on Aptos Mainnet.
+
+## Key Facts
+
+- 3-line integration using the `@smoothsend/sdk` npm package
+- Works as a drop-in `transactionSubmitter` for `@aptos-labs/wallet-adapter-react`
+- Testnet is always free. Mainnet fee is $0.01 minimum per transaction.
+- Secure by default: API key auth, rate limiting, gateway-level validation on every request
+- Multi-chain roadmap: Aptos live now, EVM and Stellar coming soon
+
+## Documentation
+
+- [Home](https://docs.smoothsend.xyz): Overview, quick start code, and pricing calculator
+- [Installation](https://docs.smoothsend.xyz/aptos/installation): How to install `@smoothsend/sdk` and set up the SDK
+- [Quick Start](https://docs.smoothsend.xyz/aptos/quickstart): Step-by-step guide to go gasless in minutes
+- [API Reference](https://docs.smoothsend.xyz/aptos/api-reference): Full API reference for SmoothSendTransactionSubmitter and ScriptComposerClient
+- [Examples](https://docs.smoothsend.xyz/aptos/examples): Real-world code examples for wallet adapter setup, USDC transfers, fee previews, and error handling
+- [Pricing](https://docs.smoothsend.xyz/billing): Credit-based pricing details and interactive gas calculator
+- [Dashboard](https://dashboard.smoothsend.xyz): Manage API keys, top up credits, monitor usage
+
+## Integration Summary
+
+Install the SDK:
+
+```bash
+npm install @smoothsend/sdk
+```
+
+Wrap your app with the gasless submitter (`providers.tsx`):
+
+```ts
+import { SmoothSendTransactionSubmitter } from '@smoothsend/sdk';
+import { AptosWalletAdapterProvider } from '@aptos-labs/wallet-adapter-react';
+
+const smoothSend = new SmoothSendTransactionSubmitter({
+  apiKey: process.env.NEXT_PUBLIC_SMOOTHSEND_API_KEY!,
+  network: 'mainnet', // or 'testnet' (always free)
+});
+
+export function Providers({ children }) {
+  return (
+    <AptosWalletAdapterProvider
+      dappConfig={{ network: Network.MAINNET, transactionSubmitter: smoothSend }}
+    >
+      {children}
+    </AptosWalletAdapterProvider>
+  );
+}
+```
+
+After this, every `signAndSubmitTransaction` call in your app is automatically gasless — no other code changes needed.
+
+## Two Integration Methods
+
+### Method 1 — Wallet Adapter (Recommended)
+
+Pass `SmoothSendTransactionSubmitter` as the `transactionSubmitter` to `AptosWalletAdapterProvider`. Works for any transaction type: APT transfers, token transfers, contract calls, NFT mints, DeFi. Mainnet usage deducts credits from your dashboard balance ($0.01 minimum per transaction).
+
+### Method 2 — Script Composer (Fee-in-Token)
+
+Use `ScriptComposerClient` for stablecoin transfers (USDC, USDT, WBTC, USDe, USD1) where the relayer fee (~$0.01) is deducted directly from the token being sent. No APT or SmoothSend credits required. Supports fee estimation before signing via `client.estimateFee()`.
+
+```ts
+import { ScriptComposerClient } from '@smoothsend/sdk';
+
+const client = new ScriptComposerClient({
+  apiKey: process.env.NEXT_PUBLIC_SMOOTHSEND_API_KEY!,
+  network: 'mainnet',
+});
+
+// Build → sign → submit
+const build = await client.buildTransfer({
+  sender: walletAddress,
+  recipient: '0xRecipientAddress',
+  amount: '1000000', // 1 USDC (6 decimals)
+  assetType: '0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b',
+  decimals: 6,
+  symbol: 'USDC',
+});
+```
+
+## Supported Tokens (Script Composer, Mainnet)
+
+| Symbol | Decimals | Aptos Mainnet Asset Address |
+|--------|----------|-----------------------------|
+| USDC   | 6        | `0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b` |
+| USDT   | 6        | `0x357b0b74bc833e95a115ad22604854d6b0fca151cecd94111770e5d6ffc9dc2b` |
+| WBTC   | 8        | `0x68c2185f5e2023f2e4401ba56b66c8ae2cfcf8a27852e70eb78b03f59a652a3d` |
+| USDe   | 6        | `0xf37a4a75f89b79985c1fcb42d0a87f4bde28cc2b46c4dd01d9a8428e7726e2e9` |
+| USD1   | 6        | `0x05fa02d0fa44a90ad59fb90adb08e24c4efbc98eb9e9f2d0d9c0ad18d7fc9d2` |
+
+## Error Codes
+
+- `401` — Invalid API key
+- `402` — Insufficient credits; top up at dashboard.smoothsend.xyz
+- `429` — Rate limit exceeded
+
+## Pricing
+
+- Testnet: Always free, no credits required
+- Mainnet (Wallet Adapter): Credits deducted from dashboard balance, $0.01 minimum per transaction
+- Mainnet (Script Composer): Fee deducted from the token being sent, no credits needed
+- Users pay $0 gas — the dApp's credits or token fee covers it
+
+## Support
+
+- Email: contact@smoothsend.xyz
+- Twitter: https://twitter.com/smoothsend
+- GitHub: https://github.com/smoothsendllms
