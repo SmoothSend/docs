@@ -88,7 +88,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="discord.smoothsend.xyz" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                <a href="https://discord.smoothsend.xyz" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
                   Discord
                 </a>
               </li>
