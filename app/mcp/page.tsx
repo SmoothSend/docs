@@ -216,7 +216,7 @@ smoothsend://docs/billing         — Pricing and credit details`}
             <p>
               The package is fully open source on{' '}
               <Link
-                href="https://github.com/smoothsendllms"
+                href="https://github.com/smoothsend"
                 target="_blank"
                 className="text-primary hover:underline"
               >

@@ -110,4 +110,4 @@ const build = await client.buildTransfer({
 
 - Email: contact@smoothsend.xyz
 - Twitter: https://twitter.com/smoothsend
-- GitHub: https://github.com/smoothsendllms
+- GitHub: https://github.com/smoothsend
