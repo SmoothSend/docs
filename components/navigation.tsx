@@ -1,114 +1,97 @@
 "use client"
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { Menu, X } from 'lucide-react'
-import { useState } from 'react'
-import { cn } from '@/lib/utils'
+import { Menu, X, Search } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-
-const navItems = [
-  { href: '/', label: 'Home' },
-  { href: '/aptos/installation', label: 'Installation' },
-  { href: '/aptos/quickstart', label: 'Quick Start' },
-  { href: '/aptos/api-reference', label: 'API Reference' },
-  { href: '/aptos/examples', label: 'Examples' },
-  { href: '/billing', label: 'Pricing' },
-  { href: '/mcp', label: 'MCP' },
-]
+import { SidebarContent } from './sidebar'
 
 export function Navigation() {
-  const pathname = usePathname()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        searchRef.current?.focus()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0B0C15]/75 backdrop-blur-2xl shadow-lg shadow-black/30">
-      <div className="container mx-auto max-w-7xl px-4">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="relative h-8 w-8">
-              <Image
-                src="/Logo Light.png"
-                alt="SmoothSend Logo"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
-            <span className="font-bold text-xl tracking-tight">SmoothSend</span>
-            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">Docs</span>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
-                  pathname === item.href
-                    ? "text-primary bg-primary/10"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                )}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <Link
-              href="https://dashboard.smoothsend.xyz"
-              target="_blank"
-              className="ml-4 px-4 py-2 text-sm font-semibold text-primary-foreground bg-primary rounded-lg shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all duration-200 active:scale-95"
-            >
-              Dashboard
+    <>
+      <nav className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0B0C15]/90 backdrop-blur-xl h-[49px]">
+        <div className="flex h-full items-center justify-between px-4 lg:px-6">
+          {/* Left — Logo + Documentation */}
+          <div className="flex items-center gap-5">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="relative h-6 w-6">
+                <Image
+                  src="/Logo Light.png"
+                  alt="SmoothSend Logo"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+              <span className="font-bold text-sm tracking-wider text-white uppercase">SmoothSend</span>
+            </Link>
+            <Link href="/" className="text-sm text-gray-300 hover:text-white transition-colors hidden sm:block">
+              Documentation
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 text-muted-foreground hover:text-foreground"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-border py-4 space-y-1 bg-background/95 backdrop-blur-xl">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={cn(
-                  "block px-4 py-3 text-sm font-medium transition-colors",
-                  pathname === item.href
-                    ? "text-primary bg-primary/5 border-r-2 border-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/20"
-                )}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <div className="pt-4 px-4">
-              <Link
-                href="https://dashboard.smoothsend.xyz"
-                target="_blank"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block w-full text-center px-4 py-3 text-sm font-semibold text-primary-foreground bg-primary rounded-lg shadow-lg hover:bg-primary/90 transition-all"
-              >
-                Go to Dashboard
-              </Link>
+          {/* Center — Search */}
+          <div className="hidden md:flex items-center flex-1 max-w-sm mx-6">
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500" />
+              <input
+                ref={searchRef}
+                type="text"
+                placeholder="Search documentation"
+                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg pl-9 pr-14 py-1.5 text-sm text-gray-300 placeholder:text-gray-500 focus:outline-none focus:border-[#7595FF]/40 focus:ring-1 focus:ring-[#7595FF]/20 transition-all"
+              />
+              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5">
+                <kbd className="px-1.5 py-0.5 text-[10px] font-mono text-gray-500 bg-white/[0.06] border border-white/[0.08] rounded">⌘</kbd>
+                <kbd className="px-1.5 py-0.5 text-[10px] font-mono text-gray-500 bg-white/[0.06] border border-white/[0.08] rounded">K</kbd>
+              </div>
             </div>
           </div>
-        )}
-      </div>
-    </nav>
+
+          {/* Right — Dashboard CTA + Mobile toggle */}
+          <div className="flex items-center gap-3">
+            <Link
+              href="https://dashboard.smoothsend.xyz"
+              target="_blank"
+              className="hidden sm:inline-flex px-4 py-1.5 text-sm font-medium text-white bg-[#7595FF] rounded-lg hover:bg-[#5B7ADD] transition-colors"
+            >
+              Dashboard
+            </Link>
+            <button
+              className="lg:hidden p-1.5 text-gray-400 hover:text-white transition-colors"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile sidebar overlay */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
+          <div
+            className="absolute left-0 top-[49px] bottom-0 w-[280px] bg-[#0B0C15] border-r border-white/[0.06] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <SidebarContent onNavigate={() => setMobileOpen(false)} />
+          </div>
+        </div>
+      )}
+    </>
   )
 }

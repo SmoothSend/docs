@@ -249,8 +249,8 @@ async function handleTransaction(tx: () => Promise<{ hash: string }>) {
 
         {/* Navigation */}
         <div className="flex items-center justify-between pt-8 border-t border-border">
-          <Link href="/aptos/api-reference" className="text-sm text-gray-400 hover:text-smoothsend-primary">
-            ← API Reference
+          <Link href="/aptos/sponsorship-rules" className="text-sm text-gray-400 hover:text-smoothsend-primary">
+            ← Sponsorship Rules
           </Link>
           <Link href="/billing" className="text-sm text-gray-400 hover:text-smoothsend-primary">
             Pricing →

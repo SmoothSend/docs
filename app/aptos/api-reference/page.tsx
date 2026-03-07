@@ -61,11 +61,13 @@ export default function APIReferencePage() {
               <CodeBlock
                 language="typescript"
                 code={`new SmoothSendTransactionSubmitter({
-  apiKey: string,      // Required — your pk_nogas_* or sk_nogas_* key
-  network?: string,    // 'testnet' | 'mainnet'  (default: 'testnet')
-  gatewayUrl?: string, // Override gateway URL   (default: https://proxy.smoothsend.xyz)
-  timeout?: number,    // Request timeout ms     (default: 30000)
-  debug?: boolean,     // Log requests/responses (default: false)
+  apiKey: string,              // Required — your pk_nogas_* or sk_nogas_* key
+  network?: string,            // 'testnet' | 'mainnet'  (default: 'testnet')
+  gatewayUrl?: string,         // Override gateway URL   (default: https://proxy.smoothsend.xyz)
+  timeout?: number,            // Request timeout ms     (default: 30000)
+  debug?: boolean,             // Log requests/responses (default: false)
+  getCaptchaToken?: () => Promise<string | null>,
+                               // CAPTCHA callback — see Sponsorship Rules
 })`}
               />
             </div>
@@ -257,8 +259,8 @@ try {
           <Link href="/aptos/quickstart" className="text-sm text-gray-400 hover:text-smoothsend-primary">
             ← Quick Start
           </Link>
-          <Link href="/aptos/examples" className="text-sm text-gray-400 hover:text-smoothsend-primary">
-            Examples →
+          <Link href="/aptos/sponsorship-rules" className="text-sm text-gray-400 hover:text-smoothsend-primary">
+            Sponsorship Rules →
           </Link>
         </div>
       </div>
