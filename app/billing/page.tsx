@@ -156,7 +156,7 @@ export default function BillingPage() {
                 <tbody className="divide-y divide-border/50">
                   <tr>
                     <td className="py-3 pr-6 text-gray-300">Simple transfer</td>
-                    <td className="py-3 pr-6 font-mono text-gray-400">$0.001</td>
+                    <td className="py-3 pr-6 font-mono text-gray-400">$0.002</td>
                     <td className="py-3 font-mono font-semibold text-smoothsend-primary">$0.01</td>
                   </tr>
                   <tr>
@@ -166,13 +166,13 @@ export default function BillingPage() {
                   </tr>
                   <tr>
                     <td className="py-3 pr-6 text-gray-300">Smart contract call</td>
-                    <td className="py-3 pr-6 font-mono text-gray-400">$0.01</td>
-                    <td className="py-3 font-mono font-semibold text-smoothsend-primary">$0.015</td>
+                    <td className="py-3 pr-6 font-mono text-gray-400">$0.05</td>
+                    <td className="py-3 font-mono font-semibold text-smoothsend-primary">$0.075</td>
                   </tr>
                   <tr>
                     <td className="py-3 pr-6 text-gray-300">Complex transaction</td>
-                    <td className="py-3 pr-6 font-mono text-gray-400">$0.05</td>
-                    <td className="py-3 font-mono font-semibold text-smoothsend-primary">$0.075</td>
+                    <td className="py-3 pr-6 font-mono text-gray-400">$0.50</td>
+                    <td className="py-3 font-mono font-semibold text-smoothsend-primary">$0.75</td>
                   </tr>
                 </tbody>
               </table>

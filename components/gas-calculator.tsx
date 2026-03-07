@@ -4,19 +4,19 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import { ChevronDown, TrendingDown, Info, RefreshCw, ExternalLink, BookOpen, Zap, Coins, FileCode2, GitMerge } from "lucide-react"
 
-// ─── Aptos gas model constants ────────────────────────────────────────────────
-const PAYLOAD_BASE_GAS = 1_500_000   // base internal gas for any payload
-const PAYLOAD_BYTE_GAS = 2_000       // extra internal gas per byte above cutoff
+// ─── Aptos gas model constants (post AIP-141: 10x gas increase) ──────────────
+const PAYLOAD_BASE_GAS = 15_000_000  // base internal gas for any payload
+const PAYLOAD_BYTE_GAS = 20_000      // extra internal gas per byte above cutoff
 const PAYLOAD_LARGE_CUT = 600        // byte cutoff before extra kicks in
 const SCALING_FACTOR = 1_000_000     // internal → external gas divisor
 const OCTAS_PER_APT = 100_000_000    // 1 APT = 10^8 octas
 
-// ─── Transaction presets (real-world approximate values) ─────────────────────
+// ─── Transaction presets (post AIP-141 10x gas increase) ─────────────────────
 const PRESETS = [
-  { id: "transfer", label: "APT Transfer",  Icon: Zap,       gasUsed: 7,     instructionGas: 3_500_000,   storageGas: 2_000_000,   payloadBytes: 100 },
-  { id: "token",    label: "Token Transfer", Icon: Coins,     gasUsed: 24,    instructionGas: 12_000_000,  storageGas: 10_500_000,  payloadBytes: 200 },
-  { id: "contract", label: "Contract Call",  Icon: FileCode2, gasUsed: 200,   instructionGas: 80_000_000,  storageGas: 60_000_000,  payloadBytes: 400 },
-  { id: "defi",     label: "DeFi / Complex", Icon: GitMerge,  gasUsed: 1_000, instructionGas: 400_000_000, storageGas: 300_000_000, payloadBytes: 800 },
+  { id: "transfer", label: "APT Transfer",  Icon: Zap,       gasUsed: 70,     instructionGas: 35_000_000,   storageGas: 20_000_000,   payloadBytes: 100 },
+  { id: "token",    label: "Token Transfer", Icon: Coins,     gasUsed: 240,    instructionGas: 120_000_000,  storageGas: 105_000_000,  payloadBytes: 200 },
+  { id: "contract", label: "Contract Call",  Icon: FileCode2, gasUsed: 2_000,  instructionGas: 800_000_000,  storageGas: 600_000_000,  payloadBytes: 400 },
+  { id: "defi",     label: "DeFi / Complex", Icon: GitMerge,  gasUsed: 10_000, instructionGas: 4_000_000_000, storageGas: 3_000_000_000, payloadBytes: 800 },
 ]
 
 const VOLUME_STEPS = [100, 500, 1_000, 5_000, 10_000, 50_000, 100_000]
