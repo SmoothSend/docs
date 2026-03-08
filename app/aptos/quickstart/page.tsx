@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, Zap, CheckCircle2, Coins } from 'lucide-react'
+import { ArrowRight, Zap, CheckCircle2, Coins, SplitSquareHorizontal } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
@@ -131,6 +131,77 @@ const result = await signAndSubmitTransaction({ data: payload });`}
                   <li>• Any transaction type — transfers, contracts, NFT mints, DeFi</li>
                   <li>• Testnet: completely free, no setup required</li>
                   <li>• Mainnet: credits deducted from your dashboard ($0.01 minimum per tx)</li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* ── Method 1B: useSmoothSend Hook ────────────────────────────── */}
+        <Card className="border-[#7595FF]/20 bg-[#7595FF]/[0.02]">
+          <CardHeader>
+            <div className="flex items-center gap-2 mb-1">
+              <SplitSquareHorizontal className="w-5 h-5 text-[#7595FF]" />
+              <CardTitle>Advanced — <code className="font-mono text-[#7595FF]">useSmoothSend</code> Hook (Per-Function Routing)</CardTitle>
+            </div>
+            <CardDescription>
+              Use this when only <em>some</em> functions should be gasless. Each component
+              decides independently — sponsored functions go through SmoothSend, others use
+              the user&apos;s own APT.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <CodeBlock
+              language="typescript"
+              filename="providers.tsx + TodoList.tsx"
+              showLineNumbers
+              highlightLines={[1, 5, 6, 7, 8, 14, 17, 21, 22, 23]}
+              code={`// providers.tsx — plain wallet provider, no transactionSubmitter
+import { AptosWalletAdapterProvider } from '@aptos-labs/wallet-adapter-react';
+import { Network } from '@aptos-labs/ts-sdk';
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <AptosWalletAdapterProvider dappConfig={{ network: Network.MAINNET }}>
+      {children}
+    </AptosWalletAdapterProvider>
+  );
+}
+
+// TodoList.tsx — per-component hook
+import { useSmoothSend } from '@smoothsend/sdk';
+import { SmoothSendTransactionSubmitter } from '@smoothsend/sdk';
+
+const submitter = new SmoothSendTransactionSubmitter({
+  apiKey: process.env.NEXT_PUBLIC_SMOOTHSEND_API_KEY!,
+  network: 'mainnet',
+});
+
+function TodoList() {
+  // signAndSubmitTransaction auto-routes:
+  //   sponsored functions  → fee-payer gasless (user pays 0 APT)
+  //   non-sponsored        → user pays gas normally
+  const { signAndSubmitTransaction } = useSmoothSend(submitter);
+
+  const handleDelete = async (id: number) => {
+    // delete_todo is whitelisted in Sponsorship Rules → gasless
+    const result = await signAndSubmitTransaction(buildDeleteTodoPayload(id));
+    console.log('Tx hash:', result.hash);
+  };
+}`}
+            />
+
+            <div className="flex items-start gap-3 p-3.5 rounded-lg bg-[#7595FF]/[0.07] border border-[#7595FF]/20">
+              <CheckCircle2 className="w-4 h-4 text-[#7595FF] mt-0.5 shrink-0" />
+              <div className="text-sm space-y-2">
+                <p className="font-medium text-[#7595FF]">When to choose <code className="font-mono text-xs">useSmoothSend</code> over <code className="font-mono text-xs">transactionSubmitter</code></p>
+                <ul className="text-gray-300 space-y-1">
+                  <li>• You want specific contract functions sponsored, not all transactions</li>
+                  <li>• You have user-pays actions (e.g. &quot;create&quot; costs gas) alongside free actions (e.g. &quot;delete&quot; is free)</li>
+                  <li>• You manage sponsorship via the{' '}
+                    <Link href="/aptos/sponsorship-rules" className="text-[#7595FF] hover:underline">Sponsorship Rules</Link>{' '}
+                    allowlist in your dashboard
+                  </li>
                 </ul>
               </div>
             </div>

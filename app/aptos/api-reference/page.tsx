@@ -84,6 +84,22 @@ export default function APIReferencePage() {
                     changes needed in your existing wallet calls.
                   </p>
                 </div>
+                <div className="border-l-2 border-[#7595FF]/50 pl-4 py-1">
+                  <code className="text-sm font-mono text-[#7595FF]">getSponsoredFunctions(): Promise&lt;string[]&gt;</code>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Fetches the list of sponsored function identifiers from your project&apos;s
+                    Sponsorship Rules. Results are cached in memory — safe to call on every render.
+                    Used internally by <code className="text-xs bg-white/5 px-1 py-0.5 rounded">useSmoothSend</code>.
+                  </p>
+                </div>
+                <div className="border-l-2 border-[#7595FF]/50 pl-4 py-1">
+                  <code className="text-sm font-mono text-[#7595FF]">isSponsored(functionName: string): Promise&lt;boolean&gt;</code>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Returns <code className="text-xs bg-white/5 px-1 py-0.5 rounded">true</code> if the given function identifier (e.g.{' '}
+                    <code className="text-xs bg-white/5 px-1 py-0.5 rounded">0x1::module::function</code>) is in the project&apos;s
+                    sponsored allowlist. Calls <code className="text-xs bg-white/5 px-1 py-0.5 rounded">getSponsoredFunctions()</code> internally.
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -113,6 +129,99 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 }`}
               />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* useSmoothSend hook */}
+        <Card className="border-[#7595FF]/20 bg-[#7595FF]/[0.02]">
+          <CardHeader>
+            <CardTitle>useSmoothSend</CardTitle>
+            <CardDescription>
+              React hook for automatic per-function gasless routing. Replaces{' '}
+              <code className="text-xs bg-white/5 px-1 py-0.5 rounded">useWallet().signAndSubmitTransaction</code>{' '}
+              and routes each call based on your Sponsorship Rules allowlist:
+              sponsored → fee-payer gasless, not sponsored → user pays gas normally.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div>
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Signature</h3>
+              <CodeBlock
+                language="typescript"
+                code={`import { useSmoothSend } from '@smoothsend/sdk';
+
+const { signAndSubmitTransaction } = useSmoothSend(submitter);`}
+              />
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Parameters</h3>
+              <div className="border-l-2 border-[#7595FF]/50 pl-4 py-1">
+                <code className="text-sm font-mono text-[#7595FF]">submitter: SmoothSendTransactionSubmitter</code>
+                <p className="text-sm text-gray-400 mt-1">
+                  A <code className="text-xs bg-white/5 px-1 py-0.5 rounded">SmoothSendTransactionSubmitter</code> instance.
+                  Create it once at module scope (not inside the component) to avoid recreating on every render.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Returns</h3>
+              <div className="border-l-2 border-[#7595FF]/50 pl-4 py-1">
+                <code className="text-sm font-mono text-[#7595FF]">signAndSubmitTransaction(input)</code>
+                <p className="text-sm text-gray-400 mt-1">
+                  Same call signature as the wallet adapter&apos;s{' '}
+                  <code className="text-xs bg-white/5 px-1 py-0.5 rounded">signAndSubmitTransaction</code>.
+                  Automatically routes: sponsored functions use fee-payer gasless path; others fall back
+                  to the user paying gas via their wallet.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Usage</h3>
+              <CodeBlock
+                language="typescript"
+                filename="TodoList.tsx"
+                showLineNumbers
+                code={`import { useSmoothSend, SmoothSendTransactionSubmitter } from '@smoothsend/sdk';
+import { useWallet } from '@aptos-labs/wallet-adapter-react';
+
+// Create once at module scope
+const submitter = new SmoothSendTransactionSubmitter({
+  apiKey: process.env.NEXT_PUBLIC_SMOOTHSEND_API_KEY!,
+  network: 'mainnet',
+});
+
+function TodoList() {
+  const { account } = useWallet();
+
+  // Drop-in for useWallet().signAndSubmitTransaction
+  const { signAndSubmitTransaction } = useSmoothSend(submitter);
+
+  const handleDelete = async (id: number) => {
+    // 'delete_todo' in sponsorship rules → gasless
+    // 'create_todo' not in rules → user pays gas
+    const result = await signAndSubmitTransaction({
+      data: {
+        function: \`\${MODULE_ADDRESS}::todolist::delete_todo\`,
+        functionArguments: [id],
+      },
+    });
+    console.log('Tx hash:', result.hash);
+  };
+}`}
+              />
+            </div>
+
+            <div className="p-3.5 rounded-lg bg-amber-500/[0.07] border border-amber-500/20 text-sm">
+              <p className="font-medium text-amber-400 mb-1">Note</p>
+              <p className="text-gray-300">
+                The wallet must support <code className="text-xs bg-white/5 px-1 py-0.5 rounded">signTransaction</code> (sign-only) for the
+                gasless path — Petra and Nightly both support this. If the wallet does not
+                support it, the hook automatically falls back to user-pays-gas.
+              </p>
             </div>
           </CardContent>
         </Card>

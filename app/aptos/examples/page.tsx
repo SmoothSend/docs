@@ -94,7 +94,77 @@ function TransferAPT() {
           </CardContent>
         </Card>
 
-        {/* Example 3: Script Composer USDC Transfer */}
+        {/* Example 3: useSmoothSend — Per-Function Routing */}
+        <Card>
+          <CardHeader>
+            <CardTitle>useSmoothSend — Per-Function Gasless Routing</CardTitle>
+            <CardDescription>
+              Some functions sponsored, some not — the hook routes automatically based on your
+              Sponsorship Rules. No need to put <code className="text-xs bg-white/5 px-1 py-0.5 rounded">transactionSubmitter</code>{' '}
+              in the wallet provider.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CodeBlock
+              language="typescript"
+              filename="TodoList.tsx"
+              showLineNumbers
+              highlightLines={[1, 2, 8, 9, 10, 15, 16, 30, 31]}
+              code={`import { useSmoothSend, SmoothSendTransactionSubmitter } from '@smoothsend/sdk';
+import { useWallet } from '@aptos-labs/wallet-adapter-react';
+
+const MODULE = '0xYourModuleAddress';
+const SMOOTHSEND_KEY = process.env.NEXT_PUBLIC_SMOOTHSEND_API_KEY!;
+
+// Create once outside the component — avoids re-creating on every render
+const submitter = new SmoothSendTransactionSubmitter({
+  apiKey: SMOOTHSEND_KEY,
+  network: 'mainnet',
+});
+
+function TodoList({ todos }: { todos: Array<{ id: number; content: string }> }) {
+  const { account } = useWallet();
+  // Drop-in for useWallet().signAndSubmitTransaction
+  const { signAndSubmitTransaction } = useSmoothSend(submitter);
+
+  // 'create_todo' is NOT in Sponsorship Rules → user pays gas (~0.001 APT)
+  const handleCreate = async (content: string) => {
+    const result = await signAndSubmitTransaction({
+      data: {
+        function: \`\${MODULE}::todolist::create_todo\`,
+        functionArguments: [content],
+      },
+    });
+    console.log('Created:', result.hash);
+  };
+
+  // 'delete_todo' IS in Sponsorship Rules → gasless, user pays 0 APT
+  const handleDelete = async (id: number) => {
+    const result = await signAndSubmitTransaction({
+      data: {
+        function: \`\${MODULE}::todolist::delete_todo\`,
+        functionArguments: [id],
+      },
+    });
+    console.log('Deleted:', result.hash);
+  };
+
+  return (
+    <div>
+      <button onClick={() => handleCreate('New task')}>Create (pays gas)</button>
+      {todos.map((t) => (
+        <button key={t.id} onClick={() => handleDelete(t.id)}>
+          Delete "{t.content}" (gasless)
+        </button>
+      ))}
+    </div>
+  );
+}`}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Example 4: Script Composer USDC Transfer */}
         <Card>
           <CardHeader>
             <CardTitle>Script Composer — USDC Transfer (Fee-in-Token)</CardTitle>
