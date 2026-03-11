@@ -75,7 +75,7 @@ export function SearchDialog({ isOpen, onClose }: { isOpen: boolean; onClose: ()
           <div className="overflow-y-auto p-2">
             {filteredResults.length === 0 ? (
               <div className="py-12 text-center text-gray-400">
-                No results found for "{query}"
+                No results found for &quot;{query}&quot;
               </div>
             ) : (
               <div className="space-y-1">
