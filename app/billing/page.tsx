@@ -3,6 +3,7 @@ import { Check, Zap, ArrowRight, Info, Calculator } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { GasCalculator } from '@/components/gas-calculator'
+import { Breadcrumbs } from '@/components/breadcrumbs'
 
 const CREDIT_PACKAGES = [
   { id: 'starter', amountUSD: 5, credits: 5, label: '$5', popular: false, bonusPercent: 0, txEstimate: '~500' },
@@ -15,6 +16,7 @@ const CREDIT_PACKAGES = [
 export default function BillingPage() {
   return (
     <div className="container mx-auto max-w-6xl px-4 py-12">
+      <Breadcrumbs />
       <div className="space-y-12">
 
         {/* Header */}

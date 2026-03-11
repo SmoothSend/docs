@@ -3,10 +3,12 @@ import { ArrowRight, Zap, CheckCircle2, Coins, SplitSquareHorizontal } from 'luc
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
+import { Breadcrumbs } from '@/components/breadcrumbs'
 
 export default function QuickStartPage() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
+      <Breadcrumbs />
       <div className="space-y-8">
 
         <div>

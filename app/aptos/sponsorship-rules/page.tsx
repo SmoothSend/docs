@@ -5,7 +5,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs'
 
 export default function SponsorshipRulesPage() {
   return (
-    <div className="max-w-4xl px-6 lg:px-10 py-10">
+    <div className="container mx-auto max-w-4xl px-4 py-12">
       <Breadcrumbs />
       <div className="space-y-8">
         <div>

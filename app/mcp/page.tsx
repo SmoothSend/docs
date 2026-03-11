@@ -1,7 +1,8 @@
 import Link from 'next/link'
-import { Bot, Terminal, Zap, BookOpen, Package, ExternalLink } from 'lucide-react'
+import { Terminal, Zap, BookOpen, Package, ExternalLink } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
+import { Breadcrumbs } from '@/components/breadcrumbs'
 
 const editors = [
   {
@@ -61,17 +62,12 @@ const examplePrompts = [
 export default function McpPage() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
+      <Breadcrumbs />
       <div className="space-y-8">
 
         {/* Header */}
         <div>
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Bot className="w-6 h-6 text-primary" />
-            </div>
-            <span className="text-sm font-medium text-primary uppercase tracking-wider">AI Integration</span>
-          </div>
-          <h1 className="text-4xl font-bold mb-4">MCP Server</h1>
+          <h1 className="text-4xl font-bold mb-4">AI Integration (MCP)</h1>
           <p className="text-xl text-muted-foreground">
             Give your AI assistant (Cursor, Claude Desktop, Windsurf) full SmoothSend context — so it can generate correct integration code, estimate costs, and answer SDK questions without hallucinating.
           </p>

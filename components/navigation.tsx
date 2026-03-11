@@ -1,20 +1,24 @@
 "use client"
 
 import Link from 'next/link'
-import { Menu, X, Search } from 'lucide-react'
-import { useState, useEffect, useRef } from 'react'
+import { Menu, X, Search as SearchIcon } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { SidebarContent } from './sidebar'
+import { SearchDialog } from './search-dialog'
+import { cn } from '@/lib/utils'
 
 export function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false)
-  const searchRef = useRef<HTMLInputElement>(null)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [isMac, setIsMac] = useState(true)
 
   useEffect(() => {
+    setIsMac(navigator.userAgent.includes('Mac'))
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault()
-        searchRef.current?.focus()
+        setSearchOpen(true)
       }
     }
     document.addEventListener('keydown', handleKeyDown)
@@ -23,6 +27,7 @@ export function Navigation() {
 
   return (
     <>
+      <SearchDialog isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       <nav className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0B0C15]/90 backdrop-blur-xl h-[49px]">
         <div className="flex h-full items-center justify-between px-4 lg:px-6">
           {/* Left — Logo + Documentation */}
@@ -46,19 +51,22 @@ export function Navigation() {
 
           {/* Center — Search */}
           <div className="hidden md:flex items-center flex-1 max-w-sm mx-6">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500" />
-              <input
-                ref={searchRef}
-                type="text"
-                placeholder="Search documentation"
-                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-lg pl-9 pr-14 py-1.5 text-sm text-gray-300 placeholder:text-gray-500 focus:outline-none focus:border-[#7595FF]/40 focus:ring-1 focus:ring-[#7595FF]/20 transition-all"
-              />
+            <button
+              onClick={() => setSearchOpen(true)}
+              className={cn(
+                "relative w-full text-left bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] hover:border-white/[0.15] rounded-lg pl-9 pr-14 py-1.5 text-sm transition-all",
+                searchOpen ? "opacity-0 pointer-events-none" : "opacity-100 text-gray-400"
+              )}
+            >
+              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500" />
+              <span>Search documentation...</span>
               <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5">
-                <kbd className="px-1.5 py-0.5 text-[10px] font-mono text-gray-500 bg-white/[0.06] border border-white/[0.08] rounded">⌘</kbd>
+                <kbd className="px-1.5 py-0.5 text-[10px] font-mono text-gray-500 bg-white/[0.06] border border-white/[0.08] rounded">
+                  {isMac ? '⌘' : 'Ctrl'}
+                </kbd>
                 <kbd className="px-1.5 py-0.5 text-[10px] font-mono text-gray-500 bg-white/[0.06] border border-white/[0.08] rounded">K</kbd>
               </div>
-            </div>
+            </button>
           </div>
 
           {/* Right — Dashboard CTA + Mobile toggle */}

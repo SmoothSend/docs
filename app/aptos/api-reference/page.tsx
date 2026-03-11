@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
+import { Breadcrumbs } from '@/components/breadcrumbs'
 
 const SUPPORTED_TOKENS = [
   {
@@ -38,6 +39,7 @@ const SUPPORTED_TOKENS = [
 export default function APIReferencePage() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
+      <Breadcrumbs />
       <div className="space-y-8">
         <div>
           <h1 className="text-4xl font-bold mb-4">API Reference</h1>
