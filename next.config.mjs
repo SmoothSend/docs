@@ -31,8 +31,33 @@ const nextConfig = {
         ],
       },
       {
-        // Cache public assets (logos, OG image, llms files) for 1 day
-        source: '/(.*\\.(png|jpg|jpeg|svg|ico|webp|txt))',
+        // Cache public images (logos, OG image) for 1 day
+        source: '/:path*.png',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' },
+        ],
+      },
+      {
+        source: '/:path*.jpg',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' },
+        ],
+      },
+      {
+        source: '/:path*.svg',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' },
+        ],
+      },
+      {
+        source: '/:path*.ico',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' },
+        ],
+      },
+      {
+        // Cache llms.txt and llms-full.txt for 1 day
+        source: '/:path*.txt',
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' },
         ],
