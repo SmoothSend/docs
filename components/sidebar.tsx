@@ -1,5 +1,6 @@
 "use client"
 
+import { Suspense } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ChevronRight } from 'lucide-react'
@@ -33,7 +34,7 @@ const sidebarItems: NavItem[] = [
   { href: '/mcp', label: 'MCP' },
 ]
 
-export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
+function SidebarContentInner({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
   const [expandedSections, setExpandedSections] = useState<string[]>(['Getting Started'])
 
@@ -111,6 +112,14 @@ export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         )
       })}
     </nav>
+  )
+}
+
+export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
+  return (
+    <Suspense fallback={null}>
+      <SidebarContentInner onNavigate={onNavigate} />
+    </Suspense>
   )
 }
 

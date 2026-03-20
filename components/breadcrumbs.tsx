@@ -1,5 +1,6 @@
 "use client"
 
+import { Suspense } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 
@@ -14,7 +15,7 @@ const pathLabels: Record<string, string> = {
   '/mcp': 'MCP',
 }
 
-export function Breadcrumbs() {
+function BreadcrumbsInner() {
   const pathname = usePathname()
   const label = pathLabels[pathname]
 
@@ -28,5 +29,13 @@ export function Breadcrumbs() {
       <span className="text-gray-600">&gt;</span>
       <span className="text-gray-300">{label}</span>
     </div>
+  )
+}
+
+export function Breadcrumbs() {
+  return (
+    <Suspense fallback={null}>
+      <BreadcrumbsInner />
+    </Suspense>
   )
 }
