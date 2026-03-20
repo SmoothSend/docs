@@ -231,6 +231,62 @@ function USDCTransfer() {
           </CardContent>
         </Card>
 
+        {/* Example 5: Script Composer — Backend / Server-Side */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Script Composer — Backend / Server-Side (Node.js)</CardTitle>
+            <CardDescription>
+              For backend products (bots, WhatsApp flows, Keyless). Your server builds the transaction,
+              your signing service produces an authenticator, then the server submits it. Use a{' '}
+              <code className="text-xs bg-white/5 px-1 py-0.5 rounded">sk_nogas_*</code> key on the backend.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CodeBlock
+              language="typescript"
+              filename="script-composer-backend.ts"
+              showLineNumbers
+              highlightLines={[1, 4, 5, 9, 16, 21, 22, 23]}
+              code={`import { ScriptComposerClient } from '@smoothsend/sdk';
+
+const client = new ScriptComposerClient({
+  apiKey: process.env.SMOOTHSEND_API_KEY!, // use sk_nogas_* on backend
+  network: 'mainnet',
+});
+
+// USDC mainnet asset address on Aptos
+const USDC = '0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b';
+
+async function sendUSDCViaBackend(sender: string, recipient: string, amountUsdc: number) {
+  // Step 1 — build on the server
+  const build = await client.buildTransfer({
+    sender,
+    recipient,
+    amount: String(amountUsdc * 1_000_000), // USDC has 6 decimals
+    assetType: USDC,
+    decimals: 6,
+    symbol: 'USDC',
+  });
+
+  // Step 2 — sign using your own signer (Aptos Keyless / social login / custodial key store)
+  // This MUST return authenticatorBytes compatible with the built transactionBytes.
+  const signed = await yourSigningService.sign({
+    transactionBytes: build.transactionBytes,
+    sender,
+  });
+
+  // Step 3 — submit from the server
+  const { txHash } = await client.submitSignedTransaction({
+    transactionBytes: build.transactionBytes,
+    authenticatorBytes: signed.authenticatorBytes,
+  });
+
+  return txHash;
+}`}
+            />
+          </CardContent>
+        </Card>
+
         {/* Example 4: Fee estimate before transfer */}
         <Card>
           <CardHeader>

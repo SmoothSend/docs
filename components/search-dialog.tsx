@@ -49,8 +49,8 @@ export function SearchDialog({ isOpen, onClose }: { isOpen: boolean; onClose: ()
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-[10vh] sm:pt-[15vh]">
-      <div 
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm" 
+      <div
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
       <div className="relative w-full max-w-2xl px-4 sm:px-0">
@@ -107,7 +107,7 @@ export function SearchDialog({ isOpen, onClose }: { isOpen: boolean; onClose: ()
               </div>
             )}
           </div>
-          
+
           {/* Footer */}
           <div className="px-4 py-3 border-t border-white/[0.06] bg-[#0B0C15] flex items-center justify-between text-xs text-gray-500">
             <div className="flex items-center gap-4">
