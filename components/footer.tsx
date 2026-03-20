@@ -1,7 +1,16 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 
 export function Footer() {
+  const pathname = usePathname()
+
+  if (pathname !== '/') {
+    return null
+  }
+
   return (
     <footer className="border-t border-border/40 bg-card py-12 px-4 mt-auto">
       <div className="container mx-auto max-w-6xl">

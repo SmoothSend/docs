@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 
 const BASE = 'https://docs.smoothsend.xyz'
 // Update this date when you publish significant content changes
-const LAST_MODIFIED = '2026-03-21'
+const LAST_MODIFIED = new Date('2026-03-21')
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -56,4 +56,3 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ]
 }
-
