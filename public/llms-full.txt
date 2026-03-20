@@ -1,0 +1,543 @@
+# SmoothSend — Complete Documentation
+
+> SmoothSend is a gasless transaction infrastructure platform for the Aptos blockchain.
+> It lets dApp developers sponsor gas fees for their users — users sign transactions normally but never pay gas.
+> Live on Aptos Mainnet. Testnet is always free.
+
+---
+
+## Overview
+
+SmoothSend is gasless transaction infrastructure for the Aptos blockchain. Whether you're building your first dApp or scaling a production application, SmoothSend lets your users transact without ever paying gas fees.
+
+### What you can do with SmoothSend
+
+- Enable gasless transactions with 3 lines of code using the Wallet Adapter integration
+- Build fee-in-token transfers with Script Composer — no APT needed
+- Configure Sponsorship Rules to control exactly which transactions you sponsor
+- Instantly generate API keys for access to gasless relayer infrastructure
+- Monitor usage, manage API keys, and top up credits from the Dashboard
+- Use the MCP integration to interact with SmoothSend from AI coding agents (Cursor, Claude Desktop, Windsurf)
+
+### Two Integration Methods
+
+**Method 1 — Wallet Adapter (Recommended)**
+
+Pass `SmoothSendTransactionSubmitter` as the `transactionSubmitter` to `AptosWalletAdapterProvider`. Works for any transaction type: APT transfers, token transfers, contract calls, NFT mints, DeFi. Mainnet usage deducts credits from your dashboard balance ($0.01 minimum per transaction).
+
+**Method 2 — Script Composer (Fee-in-Token)**
+
+Use `ScriptComposerClient` for stablecoin transfers (USDC, USDT, WBTC, USDe, USD1) where the relayer fee (~$0.01) is deducted directly from the token being sent. No APT or SmoothSend credits required.
+
+---
+
+## Installation
+
+Install the SDK and peer dependencies:
+
+```bash
+npm install @smoothsend/sdk
+npm install @aptos-labs/ts-sdk @aptos-labs/wallet-adapter-core
+
+# Or with yarn
+yarn add @smoothsend/sdk
+yarn add @aptos-labs/ts-sdk @aptos-labs/wallet-adapter-core
+
+# Or with pnpm
+pnpm add @smoothsend/sdk
+pnpm add @aptos-labs/ts-sdk @aptos-labs/wallet-adapter-core
+```
+
+Requirements:
+- Node.js 16+ or Bun
+- npm, yarn, or pnpm
+- An Aptos dApp project
+- A SmoothSend API key (get one at dashboard.smoothsend.xyz)
+
+---
+
+## Quick Start
+
+### Which method should I use?
+
+| | Method 1 — Wallet Adapter | Method 2 — Script Composer |
+|---|---|---|
+| Transaction types | Any — transfers, contracts, NFTs | Token transfers only |
+| Testnet | Always free | Always free |
+| Mainnet cost | Credits deducted ($0.01 min) | Fee from the token (~$0.01) |
+| Code to add | 3 lines — drop-in replacement | ~30 lines — build, sign, submit |
+| Best for | Existing dApps, any transaction | Stablecoin transfers, no credits needed |
+
+### Method 1 — Wallet Adapter Integration
+
+```typescript
+// App.tsx
+import { SmoothSendTransactionSubmitter } from '@smoothsend/sdk';
+import { AptosWalletAdapterProvider } from '@aptos-labs/wallet-adapter-react';
+import { Network } from '@aptos-labs/ts-sdk';
+
+function App() {
+  // Step 1 — create the submitter with your API key
+  const smoothSend = new SmoothSendTransactionSubmitter({
+    apiKey: process.env.NEXT_PUBLIC_SMOOTHSEND_API_KEY!,
+    network: 'testnet', // or 'mainnet'
+  });
+
+  // Step 2 — pass it to the wallet provider (that's it!)
+  return (
+    <AptosWalletAdapterProvider
+      dappConfig={{ network: Network.TESTNET, transactionSubmitter: smoothSend }}
+    >
+      <YourApp />
+    </AptosWalletAdapterProvider>
+  );
+}
+
+// Step 3 — use wallet functions as normal. Now gasless!
+const { signAndSubmitTransaction } = useWallet();
+const result = await signAndSubmitTransaction({ data: payload });
+```
+
+### Advanced — useSmoothSend Hook (Per-Function Routing)
+
+Use this when only some functions should be gasless. Each component decides independently.
+
+```typescript
+// providers.tsx — plain wallet provider, no transactionSubmitter
+import { AptosWalletAdapterProvider } from '@aptos-labs/wallet-adapter-react';
+
+export function Providers({ children }) {
+  return (
+    <AptosWalletAdapterProvider dappConfig={{ network: Network.MAINNET }}>
+      {children}
+    </AptosWalletAdapterProvider>
+  );
+}
+
+// TodoList.tsx — per-component hook
+import { useSmoothSend, SmoothSendTransactionSubmitter } from '@smoothsend/sdk';
+
+const submitter = new SmoothSendTransactionSubmitter({
+  apiKey: process.env.NEXT_PUBLIC_SMOOTHSEND_API_KEY!,
+  network: 'mainnet',
+});
+
+function TodoList() {
+  const { signAndSubmitTransaction } = useSmoothSend(submitter);
+  // sponsored functions → gasless, non-sponsored → user pays gas normally
+}
+```
+
+### Method 2 — Script Composer (Fee-in-Token)
+
+```typescript
+// transfer.ts
+import { ScriptComposerClient } from '@smoothsend/sdk';
+import { Deserializer, SimpleTransaction } from '@aptos-labs/ts-sdk';
+
+const client = new ScriptComposerClient({
+  apiKey: process.env.NEXT_PUBLIC_SMOOTHSEND_API_KEY!,
+  network: 'mainnet',
+});
+
+async function transferUSDC(walletAddress: string) {
+  const { signTransaction } = useWallet();
+
+  // Step 1 — build the transaction (fee shown before signing)
+  const build = await client.buildTransfer({
+    sender: walletAddress,
+    recipient: '0xRecipientAddress',
+    amount: '1000000',   // 1 USDC (6 decimals)
+    assetType: '0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b',
+    decimals: 6,
+    symbol: 'USDC',
+  });
+  console.log('Fee:', build.feeBreakdown.formatted.fee); // e.g. "0.01 USDC"
+
+  // Step 2 — deserialize and sign with the connected wallet
+  const txBytes = new Uint8Array(build.transactionBytes);
+  const transaction = SimpleTransaction.deserialize(new Deserializer(txBytes));
+  const signedTx = await signTransaction({ transactionOrPayload: transaction });
+
+  // Step 3 — submit
+  const result = await client.submitSignedTransaction({
+    transactionBytes: Array.from(txBytes),
+    authenticatorBytes: Array.from(signedTx.authenticator.bcsToBytes()),
+  });
+  console.log('Tx hash:', result.txHash);
+}
+```
+
+---
+
+## API Reference
+
+### SmoothSendTransactionSubmitter
+
+Drop-in transaction submitter for the Aptos Wallet Adapter. Handles any transaction type — transfers, contract calls, NFT mints, DeFi. Credits deducted on mainnet.
+
+**Constructor:**
+
+```typescript
+new SmoothSendTransactionSubmitter({
+  apiKey: string,              // Required — your pk_nogas_* or sk_nogas_* key
+  network?: string,            // 'testnet' | 'mainnet'  (default: 'testnet')
+  gatewayUrl?: string,         // Override gateway URL   (default: https://proxy.smoothsend.xyz)
+  timeout?: number,            // Request timeout ms     (default: 30000)
+  debug?: boolean,             // Log requests/responses (default: false)
+  getCaptchaToken?: () => Promise<string | null>,
+                               // CAPTCHA callback — see Sponsorship Rules
+})
+```
+
+**Methods:**
+
+- `submitTransaction(args)` — Submits a signed transaction through the SmoothSend relayer. Implements the standard `TransactionSubmitter` interface from `@aptos-labs/ts-sdk`.
+- `getSponsoredFunctions(): Promise<string[]>` — Fetches the list of sponsored function identifiers from your project's Sponsorship Rules. Results are cached in memory.
+- `isSponsored(functionName: string): Promise<boolean>` — Returns `true` if the given function identifier is in the project's sponsored allowlist.
+
+### useSmoothSend
+
+React hook for automatic per-function gasless routing.
+
+```typescript
+import { useSmoothSend } from '@smoothsend/sdk';
+
+const { signAndSubmitTransaction } = useSmoothSend(submitter);
+```
+
+Parameters:
+- `submitter: SmoothSendTransactionSubmitter` — Create once at module scope to avoid recreating on every render.
+
+Returns:
+- `signAndSubmitTransaction(input)` — Same call signature as the wallet adapter's `signAndSubmitTransaction`. Automatically routes: sponsored functions → gasless, others → user pays gas.
+
+Note: The wallet must support `signTransaction` (sign-only) for the gasless path. Petra and Nightly both support this. If the wallet does not support it, the hook automatically falls back to user-pays-gas.
+
+### ScriptComposerClient
+
+Builds fee-in-token transfers for mainnet stablecoins. No credits required — the relayer fee is deducted directly from the token being sent.
+
+**Constructor:**
+
+```typescript
+new ScriptComposerClient({
+  apiKey: string,
+  network?: 'testnet' | 'mainnet', // default: 'testnet'
+  gatewayUrl?: string,
+  timeout?: number,
+  debug?: boolean,
+})
+```
+
+**Methods:**
+
+- `buildTransfer(params)` — Builds a Script Composer transfer. Returns `transactionBytes` and a `feeBreakdown`.
+- `submitSignedTransaction(params)` — Submits the signed transaction. Returns `{ txHash: string }`.
+- `estimateFee(params)` — Quick fee estimate without building the full transaction.
+
+**buildTransfer params:**
+
+```typescript
+{
+  sender: string,       // Wallet address of the sender
+  recipient: string,    // Destination address
+  amount: string,       // Amount in smallest units (e.g. '1000000' = 1 USDC)
+  assetType: string,    // Token contract address (see Supported Tokens below)
+  decimals: number,     // Token decimals (e.g. 6 for USDC)
+  symbol: string,       // Token symbol (e.g. 'USDC')
+}
+```
+
+### Error Handling
+
+Both classes throw `SmoothSendError` on failure:
+
+```typescript
+import { SmoothSendError } from '@smoothsend/sdk';
+
+try {
+  const result = await signAndSubmitTransaction(transaction);
+  console.log('Success:', result.hash);
+} catch (error) {
+  if (error instanceof SmoothSendError) {
+    switch (error.statusCode) {
+      case 401: console.error('Invalid API key'); break;
+      case 402: console.error('Insufficient credits — top up your dashboard'); break;
+      case 429: console.error('Rate limit exceeded — slow down requests'); break;
+      default:  console.error('SmoothSend error:', error.message);
+    }
+  } else {
+    console.error('Wallet or network error:', error);
+  }
+}
+```
+
+### Supported Tokens — Script Composer (Mainnet)
+
+| Symbol | Decimals | Mainnet assetType |
+|--------|----------|-------------------|
+| USDC | 6 | `0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b` |
+| USDT | 6 | `0x357b0b74bc833e95a115ad22604854d6b0fca151cecd94111770e5d6ffc9dc2b` |
+| WBTC | 8 | `0x68c2185f5e2023f2e4401ba56b66c8ae2cfcf8a27852e70eb78b03f59a652a3d` |
+| USDe | 6 | `0xf37a4a75f89b79985c1fcb42d0a87f4bde28cc2b46c4dd01d9a8428e7726e2e9` |
+| USD1 | 6 | `0x05fa02d0fa44a90ad59fb90adb08e24c4efbc98eb9e9f2d0d9c0ad18d7fc9d2` |
+
+---
+
+## Sponsorship Rules
+
+Sponsorship Rules let you define fine-grained policies for gasless transactions. Instead of sponsoring every transaction from every user, you choose who can transact, which smart contract functions are allowed, and how much gas you're willing to cover.
+
+Rules are configured per-project from the Dashboard — no code changes required.
+
+### Available Rules
+
+| Rule | Type | Description |
+|------|------|-------------|
+| `allowedFunctions` | string[] | Whitelist of Move functions (e.g. `0x1::coin::transfer`). If set, only these functions are sponsored. |
+| `allowedSenders` | string[] | Only these wallet addresses can submit sponsored transactions. |
+| `blockedSenders` | string[] | Block specific wallets from using your sponsorship. |
+| `maxTxsPerWalletPerHour` | number | Max sponsored transactions per wallet per hour. |
+| `maxTxsPerWalletPerDay` | number | Max sponsored transactions per wallet per day. |
+| `maxGasPerTx` | number | Maximum gas units per transaction. Rejects transactions requesting more. |
+| `requireCaptcha` | boolean | Require a CAPTCHA token with each request to prevent bot abuse. |
+
+### CAPTCHA Integration
+
+When `requireCaptcha` is enabled, your frontend must provide a CAPTCHA token:
+
+```typescript
+const submitter = new SmoothSendTransactionSubmitter({
+  apiKey: process.env.NEXT_PUBLIC_SMOOTHSEND_API_KEY!,
+  network: 'mainnet',
+  getCaptchaToken: async () => {
+    return await turnstile.getToken();
+  },
+});
+```
+
+### Sponsorship Rule Error Codes
+
+| HTTP | Code | Meaning |
+|------|------|---------|
+| 403 | `SPONSORSHIP_SENDER_BLOCKED` | Wallet is on the blocked list. |
+| 403 | `SPONSORSHIP_SENDER_NOT_ALLOWED` | Wallet is not on the allowed list. |
+| 403 | `SPONSORSHIP_FUNCTION_NOT_ALLOWED` | Contract function is not in the allowlist. |
+| 403 | `SPONSORSHIP_GAS_LIMIT_EXCEEDED` | Transaction gas exceeds maxGasPerTx. |
+| 403 | `CAPTCHA_REQUIRED` | CAPTCHA token missing or invalid. |
+| 429 | `WALLET_RATE_LIMITED` | Wallet exceeded hourly or daily transaction cap. |
+
+---
+
+## Examples
+
+### Wallet Adapter — Provider Setup
+
+```typescript
+// providers.tsx
+import { SmoothSendTransactionSubmitter } from '@smoothsend/sdk';
+import { AptosWalletAdapterProvider } from '@aptos-labs/wallet-adapter-react';
+import { Network } from '@aptos-labs/ts-sdk';
+
+const submitter = new SmoothSendTransactionSubmitter({
+  apiKey: process.env.NEXT_PUBLIC_SMOOTHSEND_API_KEY!,
+  network: 'mainnet',
+});
+
+export function Providers({ children }) {
+  return (
+    <AptosWalletAdapterProvider
+      dappConfig={{ network: Network.MAINNET, transactionSubmitter: submitter }}
+    >
+      {children}
+    </AptosWalletAdapterProvider>
+  );
+}
+```
+
+### Wallet Adapter — Sending Any Transaction
+
+```typescript
+// After provider setup, existing wallet code works unchanged
+import { useWallet } from '@aptos-labs/wallet-adapter-react';
+
+function TransferAPT() {
+  const { signAndSubmitTransaction } = useWallet();
+
+  const handleTransfer = async () => {
+    const result = await signAndSubmitTransaction({
+      data: {
+        function: '0x1::coin::transfer',
+        typeArguments: ['0x1::aptos_coin::AptosCoin'],
+        functionArguments: ['0xRecipientAddress', 100_000_000],
+      },
+    });
+    console.log('Tx hash:', result.hash);
+  };
+}
+```
+
+### Script Composer — USDC Transfer (Fee-in-Token)
+
+```typescript
+// USDCTransfer.tsx
+import { ScriptComposerClient } from '@smoothsend/sdk';
+import { Deserializer, SimpleTransaction } from '@aptos-labs/ts-sdk';
+import { useWallet } from '@aptos-labs/wallet-adapter-react';
+
+const client = new ScriptComposerClient({
+  apiKey: process.env.NEXT_PUBLIC_SMOOTHSEND_API_KEY!,
+  network: 'mainnet',
+});
+
+const USDC = '0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b';
+
+function USDCTransfer() {
+  const { account, signTransaction } = useWallet();
+
+  const transfer = async (toAddress: string, amountUsdc: number) => {
+    const build = await client.buildTransfer({
+      sender: account!.address,
+      recipient: toAddress,
+      amount: String(amountUsdc * 1_000_000),
+      assetType: USDC,
+      decimals: 6,
+      symbol: 'USDC',
+    });
+    console.log('Fee:', build.feeBreakdown.formatted.fee);
+
+    const txBytes = new Uint8Array(build.transactionBytes);
+    const tx = SimpleTransaction.deserialize(new Deserializer(txBytes));
+    const signed = await signTransaction({ transactionOrPayload: tx });
+
+    const { txHash } = await client.submitSignedTransaction({
+      transactionBytes: Array.from(txBytes),
+      authenticatorBytes: Array.from(signed.authenticator.bcsToBytes()),
+    });
+    console.log('Tx hash:', txHash);
+  };
+}
+```
+
+### Script Composer — Fee Preview
+
+```typescript
+async function getUSDCFee(client: ScriptComposerClient, amount: string) {
+  const estimate = await client.estimateFee({
+    amount,
+    assetType: '0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b',
+    decimals: 6,
+    symbol: 'USDC',
+  });
+  return estimate.formatted.fee; // e.g. "0.010000 USDC"
+}
+```
+
+---
+
+## Pricing & Billing
+
+### How It Works
+
+- **Testnet** — Always free. No credits required. Perfect for development and testing.
+- **Wallet Adapter (Mainnet)** — Credits deducted from your account. From $0.01 per transaction based on gas usage.
+- **Script Composer (Mainnet)** — Fee deducted directly from the token being sent. No credits needed.
+
+### Credit Packages
+
+| Package | Price | Credits | Bonus | Est. Transactions |
+|---------|-------|---------|-------|-------------------|
+| Starter | $5 | $5 | 0% | ~500 |
+| Basic | $10 | $10 | 0% | ~1,000 |
+| Standard | $25 | $27.50 | 10% | ~2,750 |
+| Pro | $50 | $60 | 20% | ~6,000 |
+| Business | $100 | $130 | 30% | ~13,000 |
+
+Credits never expire. Purchase at dashboard.smoothsend.xyz/billing.
+
+### Pricing Examples
+
+| Transaction type | Network gas cost | You pay |
+|-----------------|-----------------|---------|
+| Simple transfer | $0.002 | $0.01 |
+| Token transfer | $0.005 | $0.01 |
+| Smart contract call | $0.05 | $0.075 |
+| Complex transaction | $0.50 | $0.75 |
+
+Minimum fee: $0.01 per transaction. Testnet is always free.
+
+### FAQ
+
+**Do credits expire?** No, credits never expire. Use them whenever you need.
+
+**What happens if I run out of credits?** Mainnet wallet adapter transactions will fail until you top up. Testnet always works for free. Script Composer is unaffected since it doesn't use credits.
+
+**Does Script Composer use credits?** No. Script Composer deducts a small fee directly from the token being sent — no credits required. Credits only apply to wallet adapter transactions on mainnet.
+
+**Can I get a refund?** Unused credits can be refunded within 30 days of purchase. Contact contact@smoothsend.xyz.
+
+**How do I check my credit balance?** Visit dashboard.smoothsend.xyz to see your current balance and usage history.
+
+---
+
+## AI Integration (MCP Server)
+
+The `@smoothsend/mcp` npm package gives AI assistants (Cursor, Claude Desktop, Windsurf) full SmoothSend context — so they generate correct integration code and can answer SDK questions without hallucinating.
+
+### Setup (2 minutes)
+
+Add to your editor's MCP config file and restart the editor. No separate install required.
+
+**Cursor** (`~/.cursor/mcp.json`):
+```json
+{
+  "mcpServers": {
+    "smoothsend": {
+      "command": "npx",
+      "args": ["@smoothsend/mcp"]
+    }
+  }
+}
+```
+
+**Claude Desktop** (`~/Library/Application Support/Claude/claude_desktop_config.json`) — same JSON content.
+
+**Windsurf** (`~/.codeium/windsurf/mcp_config.json`) — same JSON content.
+
+### Available MCP Tools
+
+- `get_docs` — Fetch full documentation for any section: overview, installation, quickstart, api-reference, examples, or billing.
+- `estimate_credits` — Calculate monthly credit cost from gas_used, gas_unit_price, apt_price_usd, and transaction volume.
+- `get_token_address` — Get the Aptos Mainnet fungible asset address for USDC, USDT, WBTC, USDe, or USD1.
+- `get_code_snippet` — Return a complete TypeScript snippet for wallet-adapter-setup, script-composer-usdc, fee-preview, error-handling, or testnet-setup.
+
+### MCP Resources
+
+```
+smoothsend://docs/overview        — Overview, quick start, pricing
+smoothsend://docs/installation    — Installation guide
+smoothsend://docs/quickstart      — Step-by-step quickstart
+smoothsend://docs/api-reference   — Full API reference
+smoothsend://docs/examples        — Real-world code examples
+smoothsend://docs/billing         — Pricing and credit details
+```
+
+### Example Prompts for AI Assistants
+
+- "How do I add SmoothSend to my Next.js app?"
+- "Show me how to send USDC without the user needing APT."
+- "My dApp does 5,000 contract calls per month at 200 gas each. How much will SmoothSend cost?"
+- "What is the USDC asset address on Aptos Mainnet?"
+- "How do I handle the error when SmoothSend credits run out?"
+
+---
+
+## Support & Contact
+
+- Documentation: https://docs.smoothsend.xyz
+- Dashboard: https://dashboard.smoothsend.xyz
+- Email: contact@smoothsend.xyz
+- Twitter / X: https://x.com/smoothsend
+- GitHub: https://github.com/smoothsend
+- Discord: https://discord.smoothsend.xyz

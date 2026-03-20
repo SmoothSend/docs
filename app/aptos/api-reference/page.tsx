@@ -1,7 +1,30 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
 import { Breadcrumbs } from '@/components/breadcrumbs'
+
+export const metadata: Metadata = {
+  title: 'API Reference',
+  description: 'Complete API reference for @smoothsend/sdk. Covers SmoothSendTransactionSubmitter, useSmoothSend hook, and ScriptComposerClient with constructor params, methods, and TypeScript examples.',
+  keywords: [
+    'smoothsend api reference', 'SmoothSendTransactionSubmitter', 'ScriptComposerClient',
+    'useSmoothSend hook', 'aptos sdk api', 'submitTransaction', 'buildTransfer',
+    'getSponsoredFunctions', 'estimateFee', 'smoothsend typescript sdk',
+  ],
+  alternates: {
+    canonical: 'https://docs.smoothsend.xyz/aptos/api-reference',
+  },
+  openGraph: {
+    title: 'API Reference',
+    description: 'Full API reference for @smoothsend/sdk — SmoothSendTransactionSubmitter, useSmoothSend, and ScriptComposerClient with complete TypeScript examples.',
+    url: 'https://docs.smoothsend.xyz/aptos/api-reference',
+  },
+  twitter: {
+    title: 'API Reference — SmoothSend Docs',
+    description: 'Full API reference for @smoothsend/sdk — SmoothSendTransactionSubmitter, useSmoothSend, and ScriptComposerClient.',
+  },
+}
 
 const SUPPORTED_TOKENS = [
   {

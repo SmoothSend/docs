@@ -1,9 +1,31 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Check, Package } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
 import { Breadcrumbs } from '@/components/breadcrumbs'
+
+export const metadata: Metadata = {
+  title: 'Installation',
+  description: 'Install the @smoothsend/sdk npm package and peer dependencies to add gasless transactions to your Aptos dApp. Supports npm, yarn, and pnpm.',
+  keywords: [
+    'install smoothsend sdk', 'npm install aptos gasless', '@smoothsend/sdk',
+    'aptos dapp setup', 'wallet adapter installation', 'aptos peer dependencies',
+  ],
+  alternates: {
+    canonical: 'https://docs.smoothsend.xyz/aptos/installation',
+  },
+  openGraph: {
+    title: 'Installation',
+    description: 'Install the @smoothsend/sdk package to add gasless transactions to your Aptos dApp. Supports npm, yarn, and pnpm.',
+    url: 'https://docs.smoothsend.xyz/aptos/installation',
+  },
+  twitter: {
+    title: 'Installation — SmoothSend Docs',
+    description: 'Install the @smoothsend/sdk package to add gasless transactions to your Aptos dApp. Supports npm, yarn, and pnpm.',
+  },
+}
 
 export default function InstallationPage() {
   return (

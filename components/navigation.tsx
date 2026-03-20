@@ -35,7 +35,7 @@ export function Navigation() {
             <Link href="/" className="flex items-center gap-2">
               <div className="relative h-6 w-6">
                 <Image
-                  src="/Logo Light.png"
+                  src="/logo-light.jpg"
                   alt="SmoothSend Logo"
                   fill
                   className="object-contain"

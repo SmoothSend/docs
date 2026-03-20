@@ -1,6 +1,31 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { Breadcrumbs } from '@/components/breadcrumbs'
+
+export const metadata: Metadata = {
+  title: {
+    absolute: 'SmoothSend Docs — Gasless Transactions for Aptos',
+  },
+  description: 'SmoothSend is gasless transaction infrastructure for Aptos. Let your users transact without paying gas fees. Live on Aptos Mainnet with a 3-line SDK integration.',
+  keywords: [
+    'smoothsend', 'aptos gasless transactions', 'gas sponsorship aptos',
+    'aptos dapp sdk', 'no gas fees blockchain', 'web3 gas abstraction',
+    'aptos wallet adapter', 'fee payer aptos', 'gasless dapp framework',
+  ],
+  alternates: {
+    canonical: 'https://docs.smoothsend.xyz',
+  },
+  openGraph: {
+    title: 'SmoothSend — Gasless Transactions for Aptos',
+    description: 'SmoothSend is gasless transaction infrastructure for Aptos. Let your users transact without paying gas fees. 3-line integration, live on mainnet.',
+    url: 'https://docs.smoothsend.xyz',
+  },
+  twitter: {
+    title: 'SmoothSend — Gasless Transactions for Aptos',
+    description: 'SmoothSend is gasless transaction infrastructure for Aptos. Let your users transact without paying gas fees. 3-line integration, live on mainnet.',
+  },
+}
 
 export default function HomePage() {
   return (

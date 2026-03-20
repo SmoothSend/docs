@@ -1,9 +1,32 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Zap, CheckCircle2, Coins, SplitSquareHorizontal } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
 import { Breadcrumbs } from '@/components/breadcrumbs'
+
+export const metadata: Metadata = {
+  title: 'Quick Start',
+  description: 'Get gasless transactions working in your Aptos dApp in minutes. Step-by-step guide for Wallet Adapter integration and Script Composer fee-in-token transfers.',
+  keywords: [
+    'aptos gasless quick start', 'smoothsend integration guide', 'wallet adapter gasless setup',
+    'aptos transaction submitter', 'script composer usdc aptos', 'fee-in-token aptos',
+    'gasless dapp tutorial', 'aptos no gas transactions', 'signAndSubmitTransaction gasless',
+  ],
+  alternates: {
+    canonical: 'https://docs.smoothsend.xyz/aptos/quickstart',
+  },
+  openGraph: {
+    title: 'Quick Start',
+    description: 'Get gasless transactions working in your Aptos dApp in minutes. Wallet Adapter or Script Composer — choose your integration method.',
+    url: 'https://docs.smoothsend.xyz/aptos/quickstart',
+  },
+  twitter: {
+    title: 'Quick Start — SmoothSend Docs',
+    description: 'Get gasless transactions working in your Aptos dApp in minutes. Wallet Adapter or Script Composer — choose your integration method.',
+  },
+}
 
 export default function QuickStartPage() {
   return (

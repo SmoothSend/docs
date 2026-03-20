@@ -2,6 +2,8 @@
 
 > SmoothSend is a gasless transaction infrastructure platform for Aptos. It lets dApp developers sponsor gas fees for their users — users sign transactions normally but never pay gas. Live on Aptos Mainnet.
 
+Full documentation (all pages, single file): https://docs.smoothsend.xyz/llms-full.txt
+
 ## Key Facts
 
 - 3-line integration using the `@smoothsend/sdk` npm package
@@ -17,6 +19,7 @@
 - [Installation](https://docs.smoothsend.xyz/aptos/installation): How to install `@smoothsend/sdk` and set up the SDK
 - [Quick Start](https://docs.smoothsend.xyz/aptos/quickstart): Step-by-step guide to go gasless in minutes
 - [API Reference](https://docs.smoothsend.xyz/aptos/api-reference): Full API reference for SmoothSendTransactionSubmitter and ScriptComposerClient
+- [Sponsorship Rules](https://docs.smoothsend.xyz/aptos/sponsorship-rules): Configure which wallets, functions, and transaction types are sponsored
 - [Examples](https://docs.smoothsend.xyz/aptos/examples): Real-world code examples for wallet adapter setup, USDC transfers, fee previews, and error handling
 - [Pricing](https://docs.smoothsend.xyz/billing): Credit-based pricing details and interactive gas calculator
 - [MCP Server](https://docs.smoothsend.xyz/mcp): MCP server for AI assistants (Cursor, Claude Desktop, Windsurf) — install `@smoothsend/mcp` from npm
@@ -86,7 +89,7 @@ const build = await client.buildTransfer({
 ## Supported Tokens (Script Composer, Mainnet)
 
 | Symbol | Decimals | Aptos Mainnet Asset Address |
-|--------|----------|-----------------------------|
+|--------|----------|------------------------------|
 | USDC   | 6        | `0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b` |
 | USDT   | 6        | `0x357b0b74bc833e95a115ad22604854d6b0fca151cecd94111770e5d6ffc9dc2b` |
 | WBTC   | 8        | `0x68c2185f5e2023f2e4401ba56b66c8ae2cfcf8a27852e70eb78b03f59a652a3d` |
@@ -109,5 +112,5 @@ const build = await client.buildTransfer({
 ## Support
 
 - Email: contact@smoothsend.xyz
-- Twitter: https://twitter.com/smoothsend
+- Twitter: https://x.com/smoothsend
 - GitHub: https://github.com/smoothsend

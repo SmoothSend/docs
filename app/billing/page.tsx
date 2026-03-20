@@ -1,9 +1,58 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Check, Zap, ArrowRight, Info, Calculator } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { GasCalculator } from '@/components/gas-calculator'
 import { Breadcrumbs } from '@/components/breadcrumbs'
+import { FaqJsonLd } from '@/components/json-ld'
+
+const FAQ_ITEMS = [
+  {
+    question: 'Do credits expire?',
+    answer: 'No, credits never expire. Use them whenever you need.',
+  },
+  {
+    question: 'What happens if I run out of credits?',
+    answer: 'Mainnet wallet adapter transactions will fail until you top up. Testnet always works for free. Script Composer is unaffected since it does not use credits.',
+  },
+  {
+    question: 'Does Script Composer use credits?',
+    answer: 'No. Script Composer deducts a small fee directly from the token being sent — no credits required. Credits only apply to wallet adapter transactions on mainnet.',
+  },
+  {
+    question: 'Can I get a refund?',
+    answer: 'Unused credits can be refunded within 30 days of purchase. Contact contact@smoothsend.xyz.',
+  },
+  {
+    question: 'How do I check my credit balance?',
+    answer: 'Visit your dashboard at dashboard.smoothsend.xyz to see your current balance and usage history.',
+  },
+]
+
+
+export const metadata: Metadata = {
+  title: 'Pricing & Billing',
+  description: 'SmoothSend credit-based pricing for gasless Aptos transactions. Testnet is always free. Mainnet from $0.01 per transaction. Script Composer has no credits — fee-in-token. Buy credit packages from $5.',
+  keywords: [
+    'smoothsend pricing', 'aptos gasless transaction cost', 'gas sponsorship price',
+    'smoothsend credits', 'aptos fee payer cost', 'gasless dapp pricing',
+    'smoothsend billing', 'aptos testnet free', 'credit packages blockchain',
+    'script composer fee', 'how much does smoothsend cost',
+  ],
+  alternates: {
+    canonical: 'https://docs.smoothsend.xyz/billing',
+  },
+  openGraph: {
+    title: 'Pricing & Billing',
+    description: 'Credit-based pricing for gasless Aptos transactions. Testnet is always free. Mainnet from $0.01 per transaction. No credits needed for Script Composer.',
+    url: 'https://docs.smoothsend.xyz/billing',
+  },
+  twitter: {
+    title: 'Pricing & Billing — SmoothSend Docs',
+    description: 'Credit-based pricing for gasless Aptos transactions. Testnet always free. Mainnet from $0.01. Script Composer is fee-in-token.',
+  },
+}
 
 const CREDIT_PACKAGES = [
   { id: 'starter', amountUSD: 5, credits: 5, label: '$5', popular: false, bonusPercent: 0, txEstimate: '~500' },
@@ -17,6 +66,7 @@ export default function BillingPage() {
   return (
     <div className="container mx-auto max-w-6xl px-4 py-12">
       <Breadcrumbs />
+      <FaqJsonLd items={FAQ_ITEMS} />
       <div className="space-y-12">
 
         {/* Header */}

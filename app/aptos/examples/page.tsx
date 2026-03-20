@@ -1,7 +1,31 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
 import { Breadcrumbs } from '@/components/breadcrumbs'
+
+export const metadata: Metadata = {
+  title: 'Examples',
+  description: 'Real-world @smoothsend/sdk code examples. Wallet Adapter setup, USDC transfers with fee-in-token, per-function gasless routing with useSmoothSend, fee preview, and error handling.',
+  keywords: [
+    'smoothsend code examples', 'aptos gasless examples typescript', 'usdc transfer aptos gasless',
+    'wallet adapter provider setup smoothsend', 'useSmoothSend hook example',
+    'script composer usdc transfer', 'fee preview aptos', 'smoothsend error handling',
+    'aptos dapp gasless tutorial code', 'node.js aptos backend gasless',
+  ],
+  alternates: {
+    canonical: 'https://docs.smoothsend.xyz/aptos/examples',
+  },
+  openGraph: {
+    title: 'Examples',
+    description: 'Real-world @smoothsend/sdk code examples: Wallet Adapter setup, USDC fee-in-token transfers, per-function gasless routing, fee preview, error handling.',
+    url: 'https://docs.smoothsend.xyz/aptos/examples',
+  },
+  twitter: {
+    title: 'Examples — SmoothSend Docs',
+    description: 'Real-world @smoothsend/sdk code examples: Wallet Adapter setup, USDC transfers, fee preview, and error handling.',
+  },
+}
 
 export default function ExamplesPage() {
   return (

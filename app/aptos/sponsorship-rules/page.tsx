@@ -1,7 +1,30 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
 import { Breadcrumbs } from '@/components/breadcrumbs'
+
+export const metadata: Metadata = {
+  title: 'Sponsorship Rules',
+  description: 'Configure fine-grained gas sponsorship policies on Aptos. Control which wallets, contract functions, and transaction types are sponsored. Set rate limits and CAPTCHA protection.',
+  keywords: [
+    'aptos gas sponsorship rules', 'smoothsend sponsorship policy', 'allowedFunctions aptos',
+    'allowedSenders blockchain', 'rate limit gas sponsorship', 'CAPTCHA transaction protection',
+    'gasless allowlist', 'aptos fee payer rules', 'transaction whitelist aptos',
+  ],
+  alternates: {
+    canonical: 'https://docs.smoothsend.xyz/aptos/sponsorship-rules',
+  },
+  openGraph: {
+    title: 'Sponsorship Rules',
+    description: 'Configure fine-grained gas sponsorship policies on Aptos. Control which wallets and contract functions are sponsored, set rate limits, and enable CAPTCHA protection.',
+    url: 'https://docs.smoothsend.xyz/aptos/sponsorship-rules',
+  },
+  twitter: {
+    title: 'Sponsorship Rules — SmoothSend Docs',
+    description: 'Configure fine-grained gas sponsorship policies on Aptos. Control which wallets and contract functions are sponsored.',
+  },
+}
 
 export default function SponsorshipRulesPage() {
   return (

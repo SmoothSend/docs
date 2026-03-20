@@ -1,8 +1,32 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Terminal, Zap, BookOpen, Package, ExternalLink } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
 import { Breadcrumbs } from '@/components/breadcrumbs'
+
+export const metadata: Metadata = {
+  title: 'AI Integration (MCP)',
+  description: 'Install the @smoothsend/mcp server to give Cursor, Claude Desktop, and Windsurf full SmoothSend context. AI assistants generate correct gasless Aptos integration code without hallucinating.',
+  keywords: [
+    'smoothsend mcp server', '@smoothsend/mcp npm', 'cursor mcp smoothsend',
+    'claude desktop mcp smoothsend', 'windsurf mcp aptos', 'ai assistant blockchain sdk',
+    'model context protocol aptos', 'mcp server npm package', 'aptos ai coding assistant',
+    'smoothsend cursor integration', 'llm aptos sdk context',
+  ],
+  alternates: {
+    canonical: 'https://docs.smoothsend.xyz/mcp',
+  },
+  openGraph: {
+    title: 'AI Integration (MCP)',
+    description: 'Give Cursor, Claude Desktop, and Windsurf full SmoothSend context via the @smoothsend/mcp server. Generate correct gasless Aptos integration code without hallucinating.',
+    url: 'https://docs.smoothsend.xyz/mcp',
+  },
+  twitter: {
+    title: 'AI Integration (MCP) — SmoothSend Docs',
+    description: 'Give Cursor, Claude Desktop, and Windsurf full SmoothSend context via the @smoothsend/mcp server.',
+  },
+}
 
 const editors = [
   {
