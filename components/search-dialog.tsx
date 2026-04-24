@@ -9,13 +9,16 @@ const searchIndex = [
   { id: '1', title: 'Introduction', description: 'What is SmoothSend?', href: '/' },
   { id: '2', title: 'Getting Started', description: 'Installation and setup requirements', href: '/aptos/installation' },
   { id: '3', title: 'Wallet Adapter Method', description: 'Enable gasless transactions with 3 lines of code', href: '/aptos/quickstart' },
-  { id: '4', title: 'Script Composer Method', description: 'Fee-in-token transfers', href: '/aptos/quickstart' },
-  { id: '5', title: 'API Reference', description: 'SmoothSendTransactionSubmitter and useSmoothSend', href: '/aptos/api-reference' },
-  { id: '6', title: 'Sponsorship Rules', description: 'Whitelist senders, functions, and rate limits', href: '/aptos/sponsorship-rules' },
-  { id: '7', title: 'Code Examples', description: 'Real-world transaction examples', href: '/aptos/examples' },
-  { id: '8', title: 'Pricing & Billing', description: 'Credit packages, fees, and gas calculator', href: '/billing' },
-  { id: '9', title: 'Model Context Protocol (MCP)', description: 'Connect Cursor, Windsurf, Claude', href: '/mcp' },
-  { id: '10', title: 'Supported Tokens', description: 'USDC, USDT, WBTC, USDe, USD1 addresses', href: '/aptos/api-reference' },
+  { id: '4', title: 'Script Composer Method', description: 'Fee-in-token transfers for mainnet stablecoins', href: '/aptos/quickstart' },
+  { id: '5', title: 'True Gasless Backend (Method 3)', description: 'TrueGaslessClient — backend Node.js gasless for any Move payload', href: '/aptos/quickstart' },
+  { id: '6', title: 'API Reference', description: 'SmoothSendTransactionSubmitter, useSmoothSend, TrueGaslessClient, and ScriptComposerClient', href: '/aptos/api-reference' },
+  { id: '7', title: 'TrueGaslessClient', description: 'Backend-only client — execute any Move payload with full gas sponsorship using sk_nogas_*', href: '/aptos/api-reference' },
+  { id: '8', title: 'Sponsorship Rules', description: 'Whitelist senders, functions, and rate limits', href: '/aptos/sponsorship-rules' },
+  { id: '9', title: 'Code Examples', description: 'Wallet Adapter, USDC transfers, TrueGaslessClient backend, error handling', href: '/aptos/examples' },
+  { id: '10', title: 'Pricing & Billing', description: 'Credit packages, fees, and gas calculator', href: '/billing' },
+  { id: '11', title: 'Model Context Protocol (MCP)', description: 'Connect Cursor, Windsurf, Claude', href: '/mcp' },
+  { id: '12', title: 'Supported Tokens', description: 'USDC, USDT, WBTC, USDe, USD1 addresses', href: '/aptos/api-reference' },
+  { id: '13', title: 'TrueGaslessClient Example', description: 'Node.js backend NFT mint, error handling, sk_nogas_* pattern', href: '/aptos/examples' },
 ]
 
 export function SearchDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {

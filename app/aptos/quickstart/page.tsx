@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Zap, CheckCircle2, Coins, SplitSquareHorizontal } from 'lucide-react'
+import { ArrowRight, Zap, CheckCircle2, Coins, SplitSquareHorizontal, Server } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     'aptos gasless quick start', 'smoothsend integration guide', 'wallet adapter gasless setup',
     'aptos transaction submitter', 'script composer usdc aptos', 'fee-in-token aptos',
     'gasless dapp tutorial', 'aptos no gas transactions', 'signAndSubmitTransaction gasless',
+    'TrueGaslessClient', 'backend gasless aptos', 'node.js aptos gasless', 'sk_nogas backend',
   ],
   alternates: {
     canonical: 'https://docs.smoothsend.xyz/aptos/quickstart',
@@ -53,34 +54,46 @@ export default function QuickStartPage() {
                   <tr className="border-b border-border text-left text-gray-400">
                     <th className="pb-3 pr-6 font-medium w-1/3"></th>
                     <th className="pb-3 pr-6 font-medium text-[#7595FF]">Method 1 — Wallet Adapter</th>
-                    <th className="pb-3 font-medium text-[#06b6d4]">Method 2 — Script Composer</th>
+                    <th className="pb-3 pr-6 font-medium text-[#06b6d4]">Method 2 — Script Composer</th>
+                    <th className="pb-3 font-medium text-[#a78bfa]">Method 3 — True Gasless (Backend)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40">
                   <tr>
+                    <td className="py-2.5 pr-6 text-gray-400">Environment</td>
+                    <td className="py-2.5 pr-6 text-gray-200">Frontend (React)</td>
+                    <td className="py-2.5 pr-6 text-gray-200">Frontend (React)</td>
+                    <td className="py-2.5 text-gray-200">Backend (Node.js)</td>
+                  </tr>
+                  <tr>
                     <td className="py-2.5 pr-6 text-gray-400">Transaction types</td>
                     <td className="py-2.5 pr-6 text-gray-200">Any — transfers, contracts, NFTs</td>
-                    <td className="py-2.5 text-gray-200">Token transfers only</td>
+                    <td className="py-2.5 pr-6 text-gray-200">Token transfers only</td>
+                    <td className="py-2.5 text-gray-200">Any — arbitrary Move payloads</td>
                   </tr>
                   <tr>
                     <td className="py-2.5 pr-6 text-gray-400">Testnet</td>
+                    <td className="py-2.5 pr-6 text-green-400 font-medium">Always free</td>
                     <td className="py-2.5 pr-6 text-green-400 font-medium">Always free</td>
                     <td className="py-2.5 text-green-400 font-medium">Always free</td>
                   </tr>
                   <tr>
                     <td className="py-2.5 pr-6 text-gray-400">Mainnet cost</td>
                     <td className="py-2.5 pr-6 text-gray-200">Credits deducted ($0.01 min)</td>
-                    <td className="py-2.5 text-gray-200">Fee from the token (~$0.01)</td>
+                    <td className="py-2.5 pr-6 text-gray-200">Fee from the token (~$0.01)</td>
+                    <td className="py-2.5 text-gray-200">Credits deducted ($0.01 min)</td>
                   </tr>
                   <tr>
-                    <td className="py-2.5 pr-6 text-gray-400">Code to add</td>
-                    <td className="py-2.5 pr-6 text-gray-200">3 lines — drop-in replacement</td>
-                    <td className="py-2.5 text-gray-200">~30 lines — build, sign, submit</td>
+                    <td className="py-2.5 pr-6 text-gray-400">API key type</td>
+                    <td className="py-2.5 pr-6 text-gray-200"><code className="text-xs bg-white/5 px-1 py-0.5 rounded">pk_nogas_*</code></td>
+                    <td className="py-2.5 pr-6 text-gray-200"><code className="text-xs bg-white/5 px-1 py-0.5 rounded">pk_nogas_*</code></td>
+                    <td className="py-2.5 text-gray-200"><code className="text-xs bg-white/5 px-1 py-0.5 rounded">sk_nogas_*</code> (secret)</td>
                   </tr>
                   <tr>
                     <td className="py-2.5 pr-6 text-gray-400">Best for</td>
                     <td className="py-2.5 pr-6 text-gray-200">Existing dApps, any transaction</td>
-                    <td className="py-2.5 text-gray-200">Stablecoin transfers, no credits needed</td>
+                    <td className="py-2.5 pr-6 text-gray-200">Stablecoin transfers, no credits needed</td>
+                    <td className="py-2.5 text-gray-200">Bots, NFT minters, server-side automation</td>
                   </tr>
                 </tbody>
               </table>
@@ -95,12 +108,13 @@ export default function QuickStartPage() {
             <p className="font-medium text-[#7595FF]">How billing works</p>
             <p className="text-gray-400">
               <span className="text-white">Testnet is always free.</span>{' '}
-              Method 1 on mainnet deducts credits from your{' '}
+              Methods 1 and 3 on mainnet deduct credits from your{' '}
               <Link href="https://dashboard.smoothsend.xyz/billing" target="_blank" className="text-[#7595FF] hover:underline">
                 dashboard balance
               </Link>{' '}
               — from $0.01 per transaction. Method 2 has no credits — the fee comes
-              from the token being sent.
+              from the token being sent. Method 3 requires a{' '}
+              <code className="text-xs bg-white/5 px-1 py-0.5 rounded">sk_nogas_*</code> secret key and must only be used server-side.
             </p>
           </div>
         </div>
@@ -292,6 +306,80 @@ async function transferUSDC(walletAddress: string) {
                   <li>• Mainnet stablecoin transfers: USDT, USDC, WBTC, USDe, USD1</li>
                   <li>• No credits needed — tiny fee deducted from the token (~$0.01)</li>
                   <li>• Users sign with their wallet; relayer pays the APT gas</li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* ── Method 3: True Gasless Backend ─────────────────────────────── */}
+        <Card className="border-[#a78bfa]/20 bg-[#a78bfa]/[0.02]">
+          <CardHeader>
+            <div className="flex items-center gap-2 mb-1">
+              <Server className="w-5 h-5 text-[#a78bfa]" />
+              <CardTitle>Method 3 — True Gasless (Backend / Node.js)</CardTitle>
+            </div>
+            <CardDescription>
+              For server-side applications where your backend signs and submits arbitrary Move
+              transactions — fully sponsored, 100% gasless for any payload. Uses a secret key
+              (<code className="text-xs bg-white/5 px-1 py-0.5 rounded">sk_nogas_*</code>) and must never run in a browser.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <CodeBlock
+              language="typescript"
+              filename="server.ts"
+              highlightLines={[1, 5, 6, 7, 10, 11, 12, 15, 16, 17, 18, 19, 20]}
+              showLineNumbers
+              code={`import { TrueGaslessClient } from '@smoothsend/sdk';
+import { Account, Ed25519PrivateKey } from '@aptos-labs/ts-sdk';
+
+// 1. Load your backend wallet from env — NEVER hardcode private keys
+const backendWallet = Account.fromPrivateKey({
+  privateKey: new Ed25519PrivateKey(process.env.APTOS_PRIVATE_KEY!),
+});
+
+// 2. Create the client with your secret key
+const client = new TrueGaslessClient({
+  apiKey: process.env.SMOOTHSEND_SECRET_KEY!, // sk_nogas_* only
+  network: 'mainnet', // or 'testnet'
+});
+
+// 3. Build and execute any Move payload — gas is fully sponsored
+const result = await client.execute({
+  senderAccount: backendWallet,
+  payload: {
+    function: '0x1::aptos_account::transfer',
+    functionArguments: ['0xRecipientAddress', '100000000'], // 1 APT
+  },
+});
+
+console.log('Gasless tx hash:', result.txHash);
+console.log('Gas used:', result.gasUsed); // paid by SmoothSend relayer`}
+            />
+
+            <div className="flex items-start gap-3 p-3.5 rounded-lg bg-amber-500/[0.07] border border-amber-500/20">
+              <CheckCircle2 className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+              <div className="text-sm">
+                <p className="font-medium text-amber-400 mb-1.5">Security rules</p>
+                <ul className="text-gray-300 space-y-1">
+                  <li>• <strong className="text-white">Never expose <code className="text-xs bg-white/5 px-1 py-0.5 rounded">sk_nogas_*</code> keys in frontend code</strong> — server-side only</li>
+                  <li>• Store your private key in environment variables, not source code</li>
+                  <li>• Use <code className="text-xs bg-white/5 px-1 py-0.5 rounded">pk_nogas_*</code> public keys for all browser-based integrations (Methods 1 &amp; 2)</li>
+                  <li>• The relayer pays all APT gas — your backend wallet only needs to exist on-chain</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 p-3.5 rounded-lg bg-[#a78bfa]/[0.07] border border-[#a78bfa]/20">
+              <CheckCircle2 className="w-4 h-4 text-[#a78bfa] mt-0.5 shrink-0" />
+              <div className="text-sm">
+                <p className="font-medium text-[#a78bfa] mb-1.5">Works for</p>
+                <ul className="text-gray-300 space-y-1">
+                  <li>• Any Move function — NFT minters, DeFi bots, protocol automations</li>
+                  <li>• Server-to-server flows where users have no wallet (e.g. WhatsApp payments, Keyless)</li>
+                  <li>• Batch operations executed from a trusted backend service</li>
+                  <li>• Testnet: completely free. Mainnet: credits deducted from your dashboard</li>
                 </ul>
               </div>
             </div>

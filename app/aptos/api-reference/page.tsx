@@ -9,8 +9,9 @@ export const metadata: Metadata = {
   description: 'Complete API reference for @smoothsend/sdk. Covers SmoothSendTransactionSubmitter, useSmoothSend hook, and ScriptComposerClient with constructor params, methods, and TypeScript examples.',
   keywords: [
     'smoothsend api reference', 'SmoothSendTransactionSubmitter', 'ScriptComposerClient',
-    'useSmoothSend hook', 'aptos sdk api', 'submitTransaction', 'buildTransfer',
+    'TrueGaslessClient', 'useSmoothSend hook', 'aptos sdk api', 'submitTransaction', 'buildTransfer',
     'getSponsoredFunctions', 'estimateFee', 'smoothsend typescript sdk',
+    'backend gasless aptos', 'execute gasless payload', 'sk_nogas backend node.js',
   ],
   alternates: {
     canonical: 'https://docs.smoothsend.xyz/aptos/api-reference',
@@ -314,6 +315,124 @@ function TodoList() {
   symbol: string,       // Token symbol (e.g. 'USDC')
 }`}
               />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* TrueGaslessClient */}
+        <Card className="border-[#a78bfa]/20 bg-[#a78bfa]/[0.02]">
+          <CardHeader>
+            <CardTitle>TrueGaslessClient</CardTitle>
+            <CardDescription>
+              Backend-only client for executing arbitrary Move payloads with 100% gas sponsorship.
+              The SDK builds the transaction, your backend signs it, and SmoothSend&apos;s relayer pays
+              the APT gas fee. Requires a secret key (<code className="text-xs bg-white/5 px-1 py-0.5 rounded">sk_nogas_*</code>).{' '}
+              <strong className="text-amber-400">Never use in a browser.</strong>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div>
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Constructor</h3>
+              <CodeBlock
+                language="typescript"
+                code={`new TrueGaslessClient({
+  apiKey: string,       // Required — your sk_nogas_* secret key (backend only)
+  network: string,      // Required — 'testnet' | 'mainnet'
+  proxyUrl?: string,    // Override the default relay endpoint (self-hosted relayers)
+  timeout?: number,     // Request timeout in ms (default: 30000)
+  debug?: boolean,      // Print detailed request logs (default: false)
+})`}
+              />
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Methods</h3>
+              <div className="space-y-4">
+                <div className="border-l-2 border-[#a78bfa]/50 pl-4 py-1">
+                  <code className="text-sm font-mono text-[#a78bfa]">execute(params): Promise&lt;ExecuteGaslessResult&gt;</code>
+                  <p className="text-sm text-gray-400 mt-1 mb-2">
+                    Builds a fee-payer transaction from <code className="text-xs bg-white/5 px-1 py-0.5 rounded">payload</code>,
+                    signs it locally with <code className="text-xs bg-white/5 px-1 py-0.5 rounded">senderAccount</code>,
+                    serializes to BCS bytes, and relays to SmoothSend for gas sponsorship and submission.
+                  </p>
+                  <CodeBlock
+                    language="typescript"
+                    code={`// Params
+{
+  senderAccount: Account,                    // Aptos Account — your backend wallet
+  payload: InputGenerateTransactionPayloadData, // Any valid Move entry function payload
+}
+
+// Returns: ExecuteGaslessResult
+{
+  success: boolean,
+  txHash?: string,      // On-chain transaction hash
+  gasUsed?: string,     // APT gas consumed (paid by relayer)
+  vmStatus?: string,    // VM execution status
+  requestId?: string,   // SmoothSend internal request ID
+  sender?: string,      // Sender address (echoed from senderAccount)
+}`}
+                  />
+                </div>
+                <div className="border-l-2 border-[#a78bfa]/50 pl-4 py-1">
+                  <code className="text-sm font-mono text-[#a78bfa]">getAptosClient(): Aptos</code>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Returns the internal <code className="text-xs bg-white/5 px-1 py-0.5 rounded">Aptos</code> instance
+                    initialized for the configured network. Useful for reading chain state
+                    (e.g. account balances, sequence numbers) without creating a second client.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Usage</h3>
+              <CodeBlock
+                language="typescript"
+                filename="server.ts"
+                showLineNumbers
+                code={`import { TrueGaslessClient } from '@smoothsend/sdk';
+import { Account, Ed25519PrivateKey } from '@aptos-labs/ts-sdk';
+
+// Initialize once — reuse across requests
+const backendWallet = Account.fromPrivateKey({
+  privateKey: new Ed25519PrivateKey(process.env.APTOS_PRIVATE_KEY!),
+});
+
+const client = new TrueGaslessClient({
+  apiKey: process.env.SMOOTHSEND_SECRET_KEY!, // sk_nogas_*
+  network: 'mainnet',
+  debug: false,
+});
+
+// Execute any Move function — gas is sponsored by SmoothSend
+const result = await client.execute({
+  senderAccount: backendWallet,
+  payload: {
+    function: '0x12b...::nft::mint_to',
+    functionArguments: [recipientAddress, tokenId],
+  },
+});
+
+if (result.success) {
+  console.log('Minted! Tx:', result.txHash);
+  console.log('Gas paid by relayer:', result.gasUsed);
+}
+
+// Optional: read chain state using the same client's Aptos instance
+const aptosClient = client.getAptosClient();
+const accountInfo = await aptosClient.getAccountInfo({ accountAddress: backendWallet.accountAddress });`}
+              />
+            </div>
+
+            <div className="p-3.5 rounded-lg bg-amber-500/[0.07] border border-amber-500/20 text-sm">
+              <p className="font-medium text-amber-400 mb-1">Security</p>
+              <p className="text-gray-300">
+                <code className="text-xs bg-white/5 px-1 py-0.5 rounded">TrueGaslessClient</code> will
+                emit a console warning if initialized with a <code className="text-xs bg-white/5 px-1 py-0.5 rounded">pk_nogas_*</code> key,
+                as public keys will fail with CORS errors in any server environment.
+                Always use <code className="text-xs bg-white/5 px-1 py-0.5 rounded">sk_nogas_*</code> on the backend.
+              </p>
             </div>
           </CardContent>
         </Card>

@@ -12,6 +12,7 @@ export const metadata: Metadata = {
     'wallet adapter provider setup smoothsend', 'useSmoothSend hook example',
     'script composer usdc transfer', 'fee preview aptos', 'smoothsend error handling',
     'aptos dapp gasless tutorial code', 'node.js aptos backend gasless',
+    'TrueGaslessClient example', 'backend arbitrary payload gasless', 'sk_nogas node.js',
   ],
   alternates: {
     canonical: 'https://docs.smoothsend.xyz/aptos/examples',
@@ -255,57 +256,68 @@ function USDCTransfer() {
           </CardContent>
         </Card>
 
-        {/* Example 5: Script Composer — Backend / Server-Side */}
+        {/* Example 5: TrueGaslessClient — Backend */}
         <Card>
           <CardHeader>
-            <CardTitle>Script Composer — Backend / Server-Side (Node.js)</CardTitle>
+            <CardTitle>TrueGaslessClient — Backend Gasless (Node.js)</CardTitle>
             <CardDescription>
-              For backend products (bots, WhatsApp flows, Keyless). Your server builds the transaction,
-              your signing service produces an authenticator, then the server submits it. Use a{' '}
-              <code className="text-xs bg-white/5 px-1 py-0.5 rounded">sk_nogas_*</code> key on the backend.
+              For server-side applications that need to execute <em>any</em> Move payload with full gas
+              sponsorship. Your backend signs the transaction; SmoothSend&apos;s relayer pays the APT gas.
+              Use a <code className="text-xs bg-white/5 px-1 py-0.5 rounded">sk_nogas_*</code> secret key — never expose this in frontend code.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <CodeBlock
               language="typescript"
-              filename="script-composer-backend.ts"
+              filename="gasless-server.ts"
               showLineNumbers
-              highlightLines={[1, 4, 5, 9, 16, 21, 22, 23]}
-              code={`import { ScriptComposerClient } from '@smoothsend/sdk';
+              highlightLines={[1, 2, 5, 6, 7, 10, 11, 12, 15, 16, 17, 18, 19, 20, 23, 24, 25]}
+              code={`import { TrueGaslessClient, SmoothSendError } from '@smoothsend/sdk';
+import { Account, Ed25519PrivateKey } from '@aptos-labs/ts-sdk';
 
-const client = new ScriptComposerClient({
-  apiKey: process.env.SMOOTHSEND_API_KEY!, // use sk_nogas_* on backend
+// Initialize once — reuse for all requests (don't recreate per request)
+const backendWallet = Account.fromPrivateKey({
+  privateKey: new Ed25519PrivateKey(process.env.APTOS_PRIVATE_KEY!),
+});
+
+const client = new TrueGaslessClient({
+  apiKey: process.env.SMOOTHSEND_SECRET_KEY!, // sk_nogas_* only
   network: 'mainnet',
 });
 
-// USDC mainnet asset address on Aptos
-const USDC = '0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b';
-
-async function sendUSDCViaBackend(sender: string, recipient: string, amountUsdc: number) {
-  // Step 1 — build on the server
-  const build = await client.buildTransfer({
-    sender,
-    recipient,
-    amount: String(amountUsdc * 1_000_000), // USDC has 6 decimals
-    assetType: USDC,
-    decimals: 6,
-    symbol: 'USDC',
+// Execute any Move payload — works for transfers, NFT mints, DeFi, custom contracts
+async function mintNFT(recipientAddress: string, tokenId: string) {
+  const result = await client.execute({
+    senderAccount: backendWallet,
+    payload: {
+      function: '0x12b...::nft_collection::mint_to',
+      functionArguments: [recipientAddress, tokenId],
+    },
   });
 
-  // Step 2 — sign using your own signer (Aptos Keyless / social login / custodial key store)
-  // This MUST return authenticatorBytes compatible with the built transactionBytes.
-  const signed = await yourSigningService.sign({
-    transactionBytes: build.transactionBytes,
-    sender,
-  });
+  console.log('NFT minted successfully!');
+  console.log('Tx hash:', result.txHash);
+  console.log('Gas used:', result.gasUsed); // Paid by SmoothSend relayer
+  console.log('VM status:', result.vmStatus);
+  return result;
+}
 
-  // Step 3 — submit from the server
-  const { txHash } = await client.submitSignedTransaction({
-    transactionBytes: build.transactionBytes,
-    authenticatorBytes: signed.authenticatorBytes,
-  });
-
-  return txHash;
+// Error handling
+async function safeExecute() {
+  try {
+    await mintNFT('0xRecipientAddress', 'token-001');
+  } catch (error) {
+    if (error instanceof SmoothSendError) {
+      switch (error.statusCode) {
+        case 401: console.error('Invalid API key — check SMOOTHSEND_SECRET_KEY'); break;
+        case 402: console.error('Insufficient credits — top up your dashboard'); break;
+        case 429: console.error('Rate limit exceeded — implement retry with backoff'); break;
+        default:  console.error('Relayer error:', error.message);
+      }
+    } else {
+      console.error('Unexpected error:', error);
+    }
+  }
 }`}
             />
           </CardContent>
