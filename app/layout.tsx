@@ -12,14 +12,15 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   metadataBase: new URL('https://docs.smoothsend.xyz'),
   title: {
-    default: 'SmoothSend Docs — Gasless Transactions for Aptos',
+    default: 'SmoothSend Docs — Gasless Transactions for Aptos & Avalanche',
     template: '%s — SmoothSend Docs',
   },
-  description: 'Complete documentation for SmoothSend SDK. Enable gasless transactions on Aptos with just 3 lines of code. Free on testnet, credits-based on mainnet.',
+  description:
+    'Complete documentation for SmoothSend SDK. Enable gasless transactions on Aptos and Avalanche (ERC-4337) with simple integrations. Free on testnet, credits-based on mainnet.',
   keywords: [
-    'aptos', 'gasless', 'transactions', 'sdk', 'blockchain', 'web3',
-    'gas sponsorship', 'fee payer', 'dapp', 'wallet adapter', 'script composer',
-    'smoothsend', 'aptos sdk', 'gasless dapp', 'no gas fees', 'aptos wallet',
+    'aptos', 'avalanche', 'avax', 'erc-4337', 'gasless', 'transactions', 'sdk', 'blockchain', 'web3',
+    'gas sponsorship', 'fee payer', 'dapp', 'wallet adapter', 'script composer', 'bundler', 'paymaster',
+    'smoothsend', 'aptos sdk', 'avax sdk', 'gasless dapp', 'no gas fees',
   ],
   authors: [{ name: 'SmoothSend', url: 'https://smoothsend.xyz' }],
   creator: 'SmoothSend',
@@ -28,8 +29,9 @@ export const metadata: Metadata = {
     canonical: 'https://docs.smoothsend.xyz',
   },
   openGraph: {
-    title: 'SmoothSend Docs — Gasless Transactions for Aptos',
-    description: 'Complete documentation for SmoothSend SDK. Enable gasless transactions on Aptos with just 3 lines of code.',
+    title: 'SmoothSend Docs — Gasless Transactions for Aptos & Avalanche',
+    description:
+      'Complete documentation for SmoothSend SDK. Enable gasless transactions on Aptos and Avalanche with simple integrations.',
     url: 'https://docs.smoothsend.xyz',
     siteName: 'SmoothSend Docs',
     type: 'website',
@@ -37,8 +39,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SmoothSend Docs — Gasless Transactions for Aptos',
-    description: 'Complete documentation for SmoothSend SDK. Enable gasless transactions on Aptos with just 3 lines of code.',
+    title: 'SmoothSend Docs — Gasless Transactions for Aptos & Avalanche',
+    description:
+      'Complete documentation for SmoothSend SDK. Enable gasless transactions on Aptos and Avalanche with simple integrations.',
     site: '@smoothsend',
     creator: '@smoothsend',
   },

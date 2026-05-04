@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 
 const BASE = 'https://docs.smoothsend.xyz'
 // Update this date when you publish significant content changes
-const LAST_MODIFIED = new Date('2026-03-21')
+const LAST_MODIFIED = new Date('2026-05-04')
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -38,6 +38,42 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${BASE}/aptos/examples`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${BASE}/getting-started`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: `${BASE}/architecture`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${BASE}/avax/quickstart`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: `${BASE}/avax/installation`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: `${BASE}/avax/api-reference`,
+      lastModified: LAST_MODIFIED,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${BASE}/avax/examples`,
       lastModified: LAST_MODIFIED,
       changeFrequency: 'weekly',
       priority: 0.8,

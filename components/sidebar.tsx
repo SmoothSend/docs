@@ -19,24 +19,50 @@ interface NavItem {
 }
 
 const sidebarItems: NavItem[] = [
-  { href: '/', label: 'Introduction' },
   {
-    label: 'Getting Started',
+    label: 'Overview',
+    children: [
+      { href: '/', label: 'Introduction' },
+      { href: '/getting-started', label: 'Getting Started' },
+      { href: '/architecture', label: 'Architecture' },
+    ],
+  },
+  {
+    label: 'Avalanche (ERC-4337)',
+    children: [
+      { href: '/avax/installation', label: 'Installation' },
+      { href: '/avax/quickstart', label: 'Quick Start' },
+      { href: '/avax/api-reference', label: 'API Reference' },
+      { href: '/avax/examples', label: 'Examples' },
+    ],
+  },
+  {
+    label: 'Aptos',
     children: [
       { href: '/aptos/installation', label: 'Installation' },
       { href: '/aptos/quickstart', label: 'Quick Start' },
+      { href: '/aptos/api-reference', label: 'API Reference' },
+      { href: '/aptos/sponsorship-rules', label: 'Sponsorship Rules' },
+      { href: '/aptos/examples', label: 'Examples' },
     ],
   },
-  { href: '/aptos/api-reference', label: 'API Reference' },
-  { href: '/aptos/sponsorship-rules', label: 'Sponsorship Rules' },
-  { href: '/aptos/examples', label: 'Examples' },
-  { href: '/billing', label: 'Pricing' },
-  { href: '/mcp', label: 'MCP' },
+  {
+    label: 'Platform',
+    children: [
+      { href: '/billing', label: 'Pricing' },
+      { href: '/mcp', label: 'MCP' },
+    ],
+  },
 ]
 
 function SidebarContentInner({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
-  const [expandedSections, setExpandedSections] = useState<string[]>(['Getting Started'])
+  const [expandedSections, setExpandedSections] = useState<string[]>([
+    'Overview',
+    'Avalanche (ERC-4337)',
+    'Aptos',
+    'Platform',
+  ])
 
   const toggleSection = (label: string) => {
     setExpandedSections((prev) =>

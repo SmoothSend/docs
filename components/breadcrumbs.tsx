@@ -6,11 +6,17 @@ import Link from 'next/link'
 
 const pathLabels: Record<string, string> = {
   '/': 'Introduction',
-  '/aptos/installation': 'Installation',
-  '/aptos/quickstart': 'Quick Start',
-  '/aptos/api-reference': 'API Reference',
-  '/aptos/sponsorship-rules': 'Sponsorship Rules',
-  '/aptos/examples': 'Examples',
+  '/getting-started': 'Getting Started',
+  '/architecture': 'Architecture',
+  '/avax/installation': 'AVAX Installation',
+  '/avax/quickstart': 'AVAX Quick Start',
+  '/avax/api-reference': 'AVAX API Reference',
+  '/avax/examples': 'AVAX Examples',
+  '/aptos/installation': 'Aptos Installation',
+  '/aptos/quickstart': 'Aptos Quick Start',
+  '/aptos/api-reference': 'Aptos API Reference',
+  '/aptos/sponsorship-rules': 'Aptos Sponsorship Rules',
+  '/aptos/examples': 'Aptos Examples',
   '/billing': 'Pricing',
   '/mcp': 'MCP',
 }

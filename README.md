@@ -1,6 +1,6 @@
 # SmoothSend Docs Site
 
-Documentation site for the SmoothSend SDK. Built with Next.js 14 (App Router), Tailwind CSS, and highlight.js. Covers Aptos gasless transaction integration via the Wallet Adapter and Script Composer methods.
+Documentation site for the SmoothSend SDK. Built with Next.js 14 (App Router), Tailwind CSS, and highlight.js. Covers chain-neutral platform docs plus Aptos integration and Avalanche ERC-4337 (AVAX bundler + paymaster) guides.
 
 Live at: `https://docs.smoothsend.xyz`
 
@@ -38,6 +38,8 @@ npm run lint       # eslint
 docs-site/
 ├── app/
 │   ├── page.tsx                    # Landing page — hero, features, gas calculator, quick start
+│   ├── getting-started/page.tsx    # Chain selection + first integration steps
+│   ├── architecture/page.tsx       # Gateway/relayer/bundler/control-plane overview
 │   ├── layout.tsx                  # Root layout — Navigation + Footer
 │   ├── globals.css                 # Tailwind base, hljs Dracula+ tokens, glass utilities, animations
 │   ├── aptos/
@@ -45,6 +47,11 @@ docs-site/
 │   │   ├── quickstart/page.tsx     # Method comparison table, both integration methods with code
 │   │   ├── api-reference/page.tsx  # SDK classes, methods, supported tokens table
 │   │   └── examples/page.tsx       # Annotated real-world code examples
+│   ├── avax/
+│   │   ├── page.tsx                # Redirect to AVAX quickstart
+│   │   ├── quickstart/page.tsx     # ERC-4337 integration via @smoothsend/sdk/avax
+│   │   ├── api-reference/page.tsx  # AVAX submitter/hook/helper API docs
+│   │   └── examples/page.tsx       # End-to-end AVAX integration examples
 │   └── billing/page.tsx            # Credit packages, pricing table, gas calculator, FAQ
 ├── components/
 │   ├── navigation.tsx              # Sticky nav — glassmorphism backdrop, active link highlight
@@ -192,4 +199,3 @@ Target domain: `docs.smoothsend.xyz`
 ## MCP Server   
   
 Install it using npm install @smoothsend/mcp
-

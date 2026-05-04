@@ -5,25 +5,28 @@ import { Breadcrumbs } from '@/components/breadcrumbs'
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'SmoothSend Docs — Gasless Transactions for Aptos',
+    absolute: 'SmoothSend Docs — Gasless Transactions for Aptos & Avalanche',
   },
-  description: 'SmoothSend is gasless transaction infrastructure for Aptos. Let your users transact without paying gas fees. Live on Aptos Mainnet with a 3-line SDK integration.',
+  description:
+    'SmoothSend is gasless transaction infrastructure for Aptos and Avalanche. Let users transact without native gas tokens using SDK-first integrations.',
   keywords: [
-    'smoothsend', 'aptos gasless transactions', 'gas sponsorship aptos',
-    'aptos dapp sdk', 'no gas fees blockchain', 'web3 gas abstraction',
-    'aptos wallet adapter', 'fee payer aptos', 'gasless dapp framework',
+    'smoothsend', 'aptos gasless transactions', 'avalanche gasless transactions',
+    'erc-4337 bundler', 'paymaster sponsorship', 'web3 gas abstraction',
+    'aptos wallet adapter', 'avax smart account', 'gasless dapp framework',
   ],
   alternates: {
     canonical: 'https://docs.smoothsend.xyz',
   },
   openGraph: {
-    title: 'SmoothSend — Gasless Transactions for Aptos',
-    description: 'SmoothSend is gasless transaction infrastructure for Aptos. Let your users transact without paying gas fees. 3-line integration, live on mainnet.',
+    title: 'SmoothSend — Gasless Transactions for Aptos & Avalanche',
+    description:
+      'SmoothSend is gasless transaction infrastructure for Aptos and Avalanche. SDK-first integrations for wallet and backend flows.',
     url: 'https://docs.smoothsend.xyz',
   },
   twitter: {
-    title: 'SmoothSend — Gasless Transactions for Aptos',
-    description: 'SmoothSend is gasless transaction infrastructure for Aptos. Let your users transact without paying gas fees. 3-line integration, live on mainnet.',
+    title: 'SmoothSend — Gasless Transactions for Aptos & Avalanche',
+    description:
+      'SmoothSend is gasless transaction infrastructure for Aptos and Avalanche. SDK-first integrations for wallet and backend flows.',
   },
 }
 
@@ -35,9 +38,13 @@ export default function HomePage() {
       <h1 className="text-4xl font-bold mb-6">About SmoothSend</h1>
 
       <p className="text-gray-300 text-lg leading-relaxed mb-6">
-        SmoothSend is gasless transaction infrastructure for the{' '}
+        SmoothSend is gasless transaction infrastructure for{' '}
         <a href="https://aptoslabs.com" target="_blank" rel="noopener noreferrer" className="text-[#7595FF] hover:underline">
-          Aptos blockchain
+          Aptos
+        </a>
+        {' '}and{' '}
+        <a href="https://www.avax.network" target="_blank" rel="noopener noreferrer" className="text-[#7595FF] hover:underline">
+          Avalanche
         </a>
         . Whether you&apos;re building your first dApp or scaling a production application,
         SmoothSend lets your users transact without ever paying gas fees.
@@ -51,21 +58,30 @@ export default function HomePage() {
         <li className="flex items-start gap-3">
           <span className="text-gray-600 mt-1.5">&bull;</span>
           <span className="text-gray-300">
-            Enable <span className="text-white font-medium">gasless transactions with 3 lines of code</span> using the{' '}
-            <Link href="/aptos/quickstart" className="text-[#7595FF] hover:underline">Wallet Adapter</Link> integration.
+            Start with a <span className="text-white font-medium">chain-aware quickstart path</span> from{' '}
+            <Link href="/getting-started" className="text-[#7595FF] hover:underline">Getting Started</Link>{' '}
+            (Aptos or Avalanche).
           </span>
         </li>
         <li className="flex items-start gap-3">
           <span className="text-gray-600 mt-1.5">&bull;</span>
           <span className="text-gray-300">
-            Build <span className="text-white font-medium">fee-in-token transfers</span> with{' '}
+            Ship <span className="text-white font-medium">Avalanche ERC-4337 sponsorship</span> with{' '}
+            <Link href="/avax/quickstart" className="text-[#7595FF] hover:underline">AVAX Quick Start</Link>{' '}
+            via <code className="text-xs bg-white/5 px-1 py-0.5 rounded">@smoothsend/sdk/avax</code>.
+          </span>
+        </li>
+        <li className="flex items-start gap-3">
+          <span className="text-gray-600 mt-1.5">&bull;</span>
+          <span className="text-gray-300">
+            Build <span className="text-white font-medium">Aptos fee-in-token transfers</span> with{' '}
             <Link href="/aptos/api-reference" className="text-[#7595FF] hover:underline">Script Composer</Link> — no APT needed.
           </span>
         </li>
         <li className="flex items-start gap-3">
           <span className="text-gray-600 mt-1.5">&bull;</span>
           <span className="text-gray-300">
-            Configure{' '}
+            Configure Aptos{' '}
             <Link href="/aptos/sponsorship-rules" className="text-[#7595FF] hover:underline">Sponsorship Rules</Link>{' '}
             to control exactly which transactions you sponsor.
           </span>
@@ -102,8 +118,8 @@ export default function HomePage() {
 
       <p className="text-gray-300 mb-12">
         <span className="font-medium text-white">Ready to get started?</span>{' '}
-        <Link href="/aptos/installation" className="text-[#7595FF] hover:underline">
-          See our Getting Started guide
+        <Link href="/getting-started" className="text-[#7595FF] hover:underline">
+          start with the chain selection guide
         </Link>.
       </p>
 
@@ -111,7 +127,7 @@ export default function HomePage() {
       <div className="border-t border-white/[0.06] pt-6">
         <div className="flex justify-end">
           <Link
-            href="/aptos/installation"
+            href="/getting-started"
             className="group flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
           >
             Getting Started

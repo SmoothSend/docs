@@ -29,7 +29,7 @@ export function Footer() {
               <span className="font-bold text-lg tracking-tight">SmoothSend</span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Gasless transactions for Aptos. Simple, secure, and scalable infrastructure for the next generation of dApps.
+              Gasless transactions for Aptos and Avalanche. Simple, secure, and scalable infrastructure for the next generation of dApps.
             </p>
           </div>
 
@@ -38,23 +38,28 @@ export function Footer() {
             <h3 className="font-semibold mb-4 text-foreground/90">Documentation</h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li>
-                <Link href="/aptos/installation" className="hover:text-primary transition-colors">
-                  Installation
+                <Link href="/getting-started" className="hover:text-primary transition-colors">
+                  Getting Started
+                </Link>
+              </li>
+              <li>
+                <Link href="/avax/quickstart" className="hover:text-primary transition-colors">
+                  AVAX Quick Start
                 </Link>
               </li>
               <li>
                 <Link href="/aptos/quickstart" className="hover:text-primary transition-colors">
-                  Quick Start
+                  Aptos Quick Start
+                </Link>
+              </li>
+              <li>
+                <Link href="/architecture" className="hover:text-primary transition-colors">
+                  Architecture
                 </Link>
               </li>
               <li>
                 <Link href="/aptos/api-reference" className="hover:text-primary transition-colors">
-                  API Reference
-                </Link>
-              </li>
-              <li>
-                <Link href="/aptos/examples" className="hover:text-primary transition-colors">
-                  Examples
+                  Aptos API Reference
                 </Link>
               </li>
             </ul>

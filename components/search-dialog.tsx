@@ -7,18 +7,24 @@ import { useRouter } from 'next/navigation'
 // Hardcoded index for client-side search
 const searchIndex = [
   { id: '1', title: 'Introduction', description: 'What is SmoothSend?', href: '/' },
-  { id: '2', title: 'Getting Started', description: 'Installation and setup requirements', href: '/aptos/installation' },
-  { id: '3', title: 'Wallet Adapter Method', description: 'Enable gasless transactions with 3 lines of code', href: '/aptos/quickstart' },
-  { id: '4', title: 'Script Composer Method', description: 'Fee-in-token transfers for mainnet stablecoins', href: '/aptos/quickstart' },
-  { id: '5', title: 'True Gasless Backend (Method 3)', description: 'TrueGaslessClient — backend Node.js gasless for any Move payload', href: '/aptos/quickstart' },
-  { id: '6', title: 'API Reference', description: 'SmoothSendTransactionSubmitter, useSmoothSend, TrueGaslessClient, and ScriptComposerClient', href: '/aptos/api-reference' },
-  { id: '7', title: 'TrueGaslessClient', description: 'Backend-only client — execute any Move payload with full gas sponsorship using sk_nogas_*', href: '/aptos/api-reference' },
-  { id: '8', title: 'Sponsorship Rules', description: 'Whitelist senders, functions, and rate limits', href: '/aptos/sponsorship-rules' },
-  { id: '9', title: 'Code Examples', description: 'Wallet Adapter, USDC transfers, TrueGaslessClient backend, error handling', href: '/aptos/examples' },
-  { id: '10', title: 'Pricing & Billing', description: 'Credit packages, fees, and gas calculator', href: '/billing' },
-  { id: '11', title: 'Model Context Protocol (MCP)', description: 'Connect Cursor, Windsurf, Claude', href: '/mcp' },
-  { id: '12', title: 'Supported Tokens', description: 'USDC, USDT, WBTC, USDe, USD1 addresses', href: '/aptos/api-reference' },
-  { id: '13', title: 'TrueGaslessClient Example', description: 'Node.js backend NFT mint, error handling, sk_nogas_* pattern', href: '/aptos/examples' },
+  { id: '2', title: 'Getting Started', description: 'Choose Aptos or Avalanche path, key types, and first integration steps', href: '/getting-started' },
+  { id: '3', title: 'Architecture', description: 'Gateway, relayer, bundler, paymaster, and dashboard control plane', href: '/architecture' },
+
+  { id: '10', title: 'AVAX Installation', description: 'Install @smoothsend/sdk/avax path with minimal Avalanche dependencies', href: '/avax/installation' },
+  { id: '11', title: 'AVAX Quick Start', description: 'ERC-4337 integration with SmoothSendAvaxSubmitter and useSmoothSendAvax', href: '/avax/quickstart' },
+  { id: '12', title: 'AVAX API Reference', description: 'SmoothSendAvaxSubmitter, paymasterSign, submitSponsoredUserOperation, hook APIs', href: '/avax/api-reference' },
+  { id: '13', title: 'AVAX Examples', description: 'Actual integration snippets for backend, React, and user-pays mode', href: '/avax/examples' },
+  { id: '14', title: 'Developer-Sponsored (AVAX)', description: 'User pays nothing; paymaster sponsors AVAX gas', href: '/avax/quickstart' },
+  { id: '15', title: 'User-Pays ERC20 (AVAX)', description: 'Paymaster sponsors AVAX gas and settles in ERC20 (USDC)', href: '/avax/quickstart' },
+
+  { id: '20', title: 'Aptos Installation', description: 'Install @smoothsend/sdk with Aptos wallet adapter dependencies', href: '/aptos/installation' },
+  { id: '21', title: 'Aptos Quick Start', description: 'Wallet Adapter, Script Composer, and backend gasless methods', href: '/aptos/quickstart' },
+  { id: '22', title: 'Aptos API Reference', description: 'SmoothSendTransactionSubmitter, useSmoothSend, ScriptComposerClient, TrueGaslessClient', href: '/aptos/api-reference' },
+  { id: '23', title: 'Aptos Sponsorship Rules', description: 'Allowed senders/functions, rate limits, captcha and policy controls', href: '/aptos/sponsorship-rules' },
+  { id: '24', title: 'Aptos Examples', description: 'Wallet adapter and fee-in-token transfer examples', href: '/aptos/examples' },
+
+  { id: '30', title: 'Pricing & Billing', description: 'Credit packages, fees, and gas calculator', href: '/billing' },
+  { id: '31', title: 'Model Context Protocol (MCP)', description: 'Connect Cursor, Windsurf, Claude', href: '/mcp' },
 ]
 
 export function SearchDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
