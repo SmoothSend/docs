@@ -105,7 +105,7 @@ sk_nogas_xxx`}
 import { SmoothSendTransactionSubmitter } from '@smoothsend/sdk';
 
 // AVAX ERC-4337 APIs
-import { SmoothSendAvaxSubmitter, useSmoothSendAvax } from '@smoothsend/sdk/avax';`}
+import { SmoothSendAvaxProvider, useSmoothSendWrite } from '@smoothsend/sdk/avax';`}
             />
           </CardContent>
         </Card>

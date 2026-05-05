@@ -5,15 +5,18 @@ import { Check, Copy } from "lucide-react"
 import { cn } from "@/lib/utils"
 import hljs from 'highlight.js/lib/core'
 import typescript from 'highlight.js/lib/languages/typescript'
+import javascript from 'highlight.js/lib/languages/javascript'
 import bash from 'highlight.js/lib/languages/bash'
 import json from 'highlight.js/lib/languages/json'
 import xml from 'highlight.js/lib/languages/xml'
 import 'highlight.js/styles/github-dark.css'
 
 hljs.registerLanguage('typescript', typescript)
-hljs.registerLanguage('javascript', typescript)
-hljs.registerLanguage('tsx', typescript)
-hljs.registerLanguage('jsx', typescript)
+hljs.registerLanguage('javascript', javascript)
+// TSX/JSX snippets frequently include JSX syntax that TypeScript lexer won't parse in hljs.
+// Map to JS lexer so docs code blocks still get colored instead of falling back to plain text.
+hljs.registerLanguage('tsx', javascript)
+hljs.registerLanguage('jsx', javascript)
 hljs.registerLanguage('bash', bash)
 hljs.registerLanguage('shell', bash)
 hljs.registerLanguage('json', json)

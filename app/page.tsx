@@ -66,9 +66,9 @@ export default function HomePage() {
         <li className="flex items-start gap-3">
           <span className="text-gray-600 mt-1.5">&bull;</span>
           <span className="text-gray-300">
-            Ship <span className="text-white font-medium">Avalanche ERC-4337 sponsorship</span> with{' '}
-            <Link href="/avax/quickstart" className="text-[#7595FF] hover:underline">AVAX Quick Start</Link>{' '}
-            via <code className="text-xs bg-white/5 px-1 py-0.5 rounded">@smoothsend/sdk/avax</code>.
+            Ship <span className="text-white font-medium">Zero-Config Avalanche gasless sponsorship</span> in minutes with{' '}
+            <Link href="/avax/quickstart" className="text-[#7595FF] hover:underline">AVAX Auto-Pilot</Link>{' '}
+            via <code className="text-xs bg-white/5 px-1 py-0.5 rounded">@smoothsend/sdk/avax</code>. Convert any wagmi app to gasless with a <span className="text-white font-medium">1-line overhaul</span>.
           </span>
         </li>
         <li className="flex items-start gap-3">
@@ -84,6 +84,12 @@ export default function HomePage() {
             Configure Aptos{' '}
             <Link href="/aptos/sponsorship-rules" className="text-[#7595FF] hover:underline">Sponsorship Rules</Link>{' '}
             to control exactly which transactions you sponsor.
+          </span>
+        </li>
+        <li className="flex items-start gap-3">
+          <span className="text-gray-600 mt-1.5">&bull;</span>
+          <span className="text-gray-300">
+            Ensure economic sustainability with <span className="text-white font-medium">Precision Gas Pricing</span> floors that adapt to network volatility automatically.
           </span>
         </li>
         <li className="flex items-start gap-3">

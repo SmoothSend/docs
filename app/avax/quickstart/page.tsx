@@ -7,12 +7,13 @@ import { Breadcrumbs } from '@/components/breadcrumbs'
 export const metadata: Metadata = {
   title: 'Avalanche Quick Start (ERC-4337)',
   description:
-    'Integrate SmoothSend AVAX bundler in minutes. Use SmoothSendAvaxClient for the simplest integration and useSmoothSendAvax for React flows.',
+    'Integrate SmoothSend AVAX bundler in minutes. Use useSmoothSendWrite for the simplest React gasless experience.',
   keywords: [
     'smoothsend avalanche',
     'erc-4337 avalanche',
     'avax bundler integration',
     'SmoothSendAvaxClient',
+    'useSmoothSendWrite',
     'useSmoothSendAvax',
     'developer-sponsored gas',
     'user-pays-erc20',
@@ -47,6 +48,87 @@ export default function AvaxQuickStartPage() {
             Add gasless UserOperation flows on Avalanche through SmoothSend gateway.
           </p>
         </div>
+
+        <Card className="border-[#7595FF]/50 bg-[#7595FF]/5 shadow-[0_0_20px_-5px_rgba(117,149,255,0.3)] overflow-hidden">
+          <div className="h-1 w-full bg-gradient-to-r from-[#7595FF] via-[#06b6d4] to-[#7595FF]" />
+          <CardHeader>
+            <CardTitle className="text-2xl flex items-center gap-2">
+              The 1-Line Overhaul <span className="text-xl">✨</span>
+            </CardTitle>
+            <CardDescription className="text-base text-gray-300">
+              Already using wagmi? Take your entire dApp gasless in two simple steps.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-3">
+              <p className="text-sm font-semibold text-[#7595FF] uppercase tracking-wider flex items-center gap-2">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#7595FF]/20 text-[10px]">1</span>
+                Global Configuration
+              </p>
+              <CodeBlock
+                language="tsx"
+                filename="App.tsx"
+                code={`import { SmoothSendAvaxProvider } from '@smoothsend/sdk/avax';
+
+<SmoothSendAvaxProvider 
+  apiKey="pk_nogas_..." 
+  network="testnet" // Optional: defaults to testnet
+  mode="developer-sponsored" // Optional: defaults to developer-sponsored
+>
+  <YourApp />
+</SmoothSendAvaxProvider>`}
+              />
+              <p className="text-xs text-gray-400">
+                Add this provider in your app root (for example{' '}
+                <code className="text-xs bg-white/5 px-1 py-0.5 rounded">main.tsx</code>,{' '}
+                <code className="text-xs bg-white/5 px-1 py-0.5 rounded">WalletProvider.tsx</code>, or your top-level
+                layout/providers file).
+              </p>
+              <p className="text-xs text-gray-500">
+                Default mode is <code className="text-xs bg-white/5 px-1 py-0.5 rounded">developer-sponsored</code>
+                , so users pay 0 native gas unless you switch to{' '}
+                <code className="text-xs bg-white/5 px-1 py-0.5 rounded">user-pays-erc20</code>.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-sm font-semibold text-[#06b6d4] uppercase tracking-wider flex items-center gap-2">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#06b6d4]/20 text-[10px]">2</span>
+                The Hook Overhaul
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Standard Wagmi</p>
+                  <CodeBlock
+                    language="tsx"
+                    code={`import { useWriteContract } from 'wagmi';`}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <p className="text-[10px] font-bold text-[#06b6d4] uppercase tracking-widest">SmoothSend Gasless</p>
+                  <CodeBlock
+                    language="tsx"
+                    className="border-[#06b6d4]/30"
+                    code={`import { useSmoothSendWrite as useWriteContract } from '@smoothsend/sdk/avax';`}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div className="pt-4 border-t border-white/5">
+              <p className="text-sm text-gray-400 italic">
+                * Every <code className="text-xs bg-white/5 px-1 py-0.5 rounded text-[#06b6d4]">writeContract()</code> call in your file is now automatically sponsored by SmoothSend.
+              </p>
+              <p className="text-xs text-gray-500 mt-2">
+                In wagmi apps, this is the only component-level change needed:{' '}
+                <code className="text-xs bg-white/5 px-1 py-0.5 rounded">
+                  import &#123; useSmoothSendWrite as useWriteContract &#125; from &apos;@smoothsend/sdk/avax&apos;
+                </code>
+                .
+              </p>
+            </div>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>
@@ -187,6 +269,84 @@ console.log(quote.feePreview); // token + amount + usd + policy fields`}
             <p>
               <code className="text-xs bg-white/5 px-1 py-0.5 rounded">transactionHash</code>: available after inclusion from{' '}
               <code className="text-xs bg-white/5 px-1 py-0.5 rounded">eth_getUserOperationReceipt</code>. Use this for explorer links.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-[#06b6d4]/40 bg-[#06b6d4]/[0.04]">
+          <CardHeader>
+            <CardTitle>React (wagmi) — The Easy Path ✨</CardTitle>
+            <CardDescription>
+              Drop-in replacement for wagmi&apos;s useWriteContract. Handles encoding and sponsoring in one line.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <CodeBlock
+              language="tsx"
+              filename="GaslessButton.tsx"
+              showLineNumbers
+              code={`import { useSmoothSendWrite } from '@smoothsend/sdk/avax';
+
+// Your existing ABI and Contract Address
+const YOUR_ABI = [...] as const;
+const YOUR_CONTRACT_ADDRESS = '0x...';
+
+function GaslessButton() {
+  // 1. Swap wagmi's useWriteContract for this!
+  // data here is a UserOperation hash (not an EVM tx hash)
+  const { writeContract, data: userOpHash, isPending: isWriting } = useSmoothSendWrite();
+  const isConfirming = false; // optional: track via eth_getUserOperationReceipt
+
+  return (
+    <button
+      disabled={isWriting || isConfirming}
+      onClick={() =>
+        writeContract({
+          address: YOUR_CONTRACT_ADDRESS,
+          abi: YOUR_ABI,
+          functionName: 'mint', // Your function name
+          args: [1],           // Your arguments
+          mode: 'developer-sponsored',
+        })
+      }
+    >
+      {isWriting ? 'Sponsoring...' : isConfirming ? 'Confirming...' : 'Submit Gasless'}
+    </button>
+  );
+}`}
+            />
+            
+            <div className="space-y-4 border-t border-white/5 pt-6">
+              <h4 className="text-sm font-semibold text-white uppercase tracking-wider">Best Practices: The 3 UI States</h4>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="flex items-start gap-3 text-sm">
+                  <div className="mt-1 h-2 w-2 rounded-full bg-gray-500" />
+                  <p><span className="text-white font-medium">Idle:</span> Button is active. User is ready to start.</p>
+                </div>
+                <div className="flex items-start gap-3 text-sm">
+                  <div className="mt-1 h-2 w-2 rounded-full bg-[#7595FF]" />
+                  <p>
+                    <span className="text-white font-medium">Writing (Sponsoring):</span> 
+                    The SDK is generating the UserOperation and requesting sponsorship. 
+                    <span className="text-[#7595FF]"> Disable the button here</span> to prevent duplicate submissions.
+                  </p>
+                </div>
+                <div className="flex items-start gap-3 text-sm">
+                  <div className="mt-1 h-2 w-2 rounded-full bg-[#06b6d4]" />
+                  <p>
+                    <span className="text-white font-medium">Confirming:</span>
+                    The UserOperation is sent. Poll{' '}
+                    <code className="text-xs bg-white/5 px-1 py-0.5 rounded">eth_getUserOperationReceipt</code>{' '}
+                    (or SDK receipt helpers) and keep the button disabled until confirmation.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-sm text-gray-400">
+              <strong>Pro Tip:</strong> If you need to target a different network for a specific action, 
+              you can pass <code className="text-xs bg-white/5 px-1 py-0.5 rounded">network</code> directly to the hook 
+              or the <code className="text-xs bg-white/5 px-1 py-0.5 rounded">writeContract</code> call.
             </p>
           </CardContent>
         </Card>
