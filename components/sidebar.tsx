@@ -32,6 +32,7 @@ const sidebarItems: NavItem[] = [
     children: [
       { href: '/avax/installation', label: 'Installation' },
       { href: '/avax/quickstart', label: 'Quick Start' },
+      { href: '/avax/privy', label: 'Privy Integration' },
       { href: '/avax/api-reference', label: 'API Reference' },
       { href: '/avax/examples', label: 'Examples' },
     ],

@@ -410,6 +410,47 @@ export function Root({ children }: { children: React.ReactNode }) {
           </CardContent>
         </Card>
 
+        <Card className="border-[#7595FF]/20 bg-[#7595FF]/[0.02]">
+          <CardHeader>
+            <CardTitle>Privy signer adapter (one-line style)</CardTitle>
+            <CardDescription>
+              Use Privy for auth/signing and SmoothSend for AVAX sponsorship.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <CodeBlock
+              language="tsx"
+              filename="RootProviders.tsx"
+              code={`import { PrivyProvider } from '@privy-io/react-auth';
+import { avalancheFuji } from 'viem/chains';
+import { SmoothSendAvaxProvider } from '@smoothsend/sdk/avax';
+
+<PrivyProvider
+  appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
+  config={{
+    embeddedWallets: { ethereum: { createOnLogin: 'users-without-wallets' } },
+    defaultChain: avalancheFuji,
+    supportedChains: [avalancheFuji],
+  }}
+>
+  <SmoothSendAvaxProvider
+    apiKey={process.env.NEXT_PUBLIC_SMOOTHSEND_API_KEY!}
+    network="testnet"
+  >
+    <YourApp />
+  </SmoothSendAvaxProvider>
+</PrivyProvider>`}
+            />
+            <p className="text-sm text-gray-400">
+              Full minimal integration (with one hook call) lives in{' '}
+              <Link href="/avax/privy" className="text-[#7595FF] hover:underline">
+                AVAX Privy Integration
+              </Link>
+              .
+            </p>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>React (wagmi) — Atomic multi-call batch</CardTitle>
@@ -507,6 +548,11 @@ function USDCTransferButton({ recipient }: { recipient: \`0x\${string}\` }) {
             <CardTitle>Continue</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
+            <div>
+              <Link href="/avax/privy" className="text-[#7595FF] hover:underline">
+                AVAX Privy Integration
+              </Link>
+            </div>
             <div>
               <Link href="/avax/api-reference" className="text-[#7595FF] hover:underline">
                 AVAX API Reference
