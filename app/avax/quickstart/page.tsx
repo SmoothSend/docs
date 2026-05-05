@@ -161,6 +161,12 @@ export default function AvaxQuickStartPage() {
                 </tbody>
               </table>
             </div>
+            <div className="mt-4 rounded-lg border border-amber-400/30 bg-amber-500/10 p-3 text-sm text-amber-100">
+              Owner/admin caveat: sponsored writes execute from the smart account (
+              <code className="text-xs bg-white/5 px-1 py-0.5 rounded">msg.sender = smart account</code>), not the EOA.
+              If your contract uses owner checks tied to an EOA, keep those admin actions on direct wagmi
+              writes (EOA path) or set ownership/admin roles to the smart account.
+            </div>
           </CardContent>
         </Card>
 
