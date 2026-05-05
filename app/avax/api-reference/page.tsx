@@ -75,7 +75,7 @@ export default function AvaxApiReferencePage() {
                 language="typescript"
                 code={`submitCall(opts): Promise<{ userOpHash: string; receipt: UserOperationReceiptAvax | null; hashTypes?: { userOpHash: string; transactionHash?: string } }>
 submitCalls(opts): Promise<{ userOpHash: string; receipt: UserOperationReceiptAvax | null; hashTypes?: { userOpHash: string; transactionHash?: string } }>
-estimateUserPaysFee(opts): Promise<{ feePreview?: AvaxFeePreview; exchangeRate?: AvaxPaymasterSignResponse['exchangeRate'] }>`}
+estimateUserPaysFee(opts): Promise<{ feePreview?: AvaxFeePreview; exchangeRate?: PaymasterSignResponseAvax['exchangeRate'] }>`}
               />
             </div>
           </CardContent>
@@ -114,7 +114,7 @@ estimateUserOperationGas(userOp, entryPoint): Promise<GasEstimateAvax>
 sendUserOperation(userOp, entryPoint): Promise<string>
 getUserOperationReceipt(userOpHash): Promise<UserOperationReceiptAvax | null>
 paymasterSign(body): Promise<PaymasterSignResponseAvax>
-estimateUserPaysFee(input): Promise<{ feePreview?: AvaxFeePreview; exchangeRate?: AvaxPaymasterSignResponse['exchangeRate'] }>
+estimateUserPaysFee(input): Promise<{ feePreview?: AvaxFeePreview; exchangeRate?: PaymasterSignResponseAvax['exchangeRate'] }>
 submitSponsoredUserOperation(opts): Promise<{ userOpHash: string; receipt: UserOperationReceiptAvax | null }>`}
               />
             </div>

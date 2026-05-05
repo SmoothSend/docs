@@ -121,17 +121,21 @@ export default function AvaxQuickStartPage() {
 const avax = createSmoothSendAvaxClient({
   apiKey: process.env.SMOOTHSEND_API_KEY!, // sk_nogas_* on backend
   network: 'testnet', // fuji
+  publicClient, // viem public client
+  walletClient, // viem wallet client
 });
 
 const result = await avax.submitCall({
-  to: '0xYourTargetContract',
-  data: '0xYourEncodedCalldata',
-  value: 0n,
+  call: {
+    to: '0xYourTargetContract',
+    data: '0xYourEncodedCalldata',
+    value: 0n,
+  },
   mode: 'developer-sponsored', // or 'user-pays-erc20'
-  // optional if user already has smart account:
-  smartAccountAddress: '0xYourSmartAccount',
-  // optional when creating via factory path:
-  // accountFactory: { owner: '0xOwner', factoryAddress: '0xFactory' },
+  // optional: override smart account if not provided in constructor
+  // smartAccountAddress: '0xYourSmartAccount',
+  // optional: override factory or provide owner for counterfactuals
+  // accountFactory: '0xYourFactoryAddress',
   waitForReceipt: false,
 });
 
@@ -153,11 +157,14 @@ console.log(result.userOpHash);`}
               filename="estimate-fee.ts"
               showLineNumbers
               code={`const quote = await avax.estimateUserPaysFee({
-  to: '0xYourTargetContract',
-  data: '0xYourEncodedCalldata',
-  value: 0n,
+  calls: [{
+    to: '0xYourTargetContract',
+    data: '0xYourEncodedCalldata',
+    value: 0n,
+  }],
   paymaster: { token: '0xUSDC' },
-  smartAccountAddress: '0xYourSmartAccount',
+  // optional: specify which smart account will pay the fee
+  // smartAccountAddress: '0xYourSmartAccount',
 });
 
 console.log(quote.feePreview); // token + amount + usd + policy fields`}
