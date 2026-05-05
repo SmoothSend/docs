@@ -66,7 +66,7 @@ export function RootProviders({ children }: { children: React.ReactNode }) {
           <CardHeader>
             <CardTitle>2) One hook in your component</CardTitle>
             <CardDescription>
-              Keep a wagmi-like write flow with Privy signatures.
+              Keep a wagmi-like write flow with Privy signatures. Do not pass <code>mode</code> to the hook.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -86,6 +86,7 @@ function PrivyGaslessButton() {
   const ownerAddress = user?.wallet?.address as \`0x\${string}\` | undefined;
 
   // Every writeContract call below goes through SmoothSend sponsorship infra.
+  // mode is set per writeContract call (not in hook params).
   const { writeContract, isPending } = useSmoothSendPrivyWrite({
     publicClient,
     ownerAddress: ownerAddress ?? '0x0000000000000000000000000000000000000000',
@@ -120,6 +121,7 @@ function PrivyGaslessButton() {
             <CardTitle>3) Use user-pays-erc20 mode (Privy)</CardTitle>
             <CardDescription>
               Set mode on the write call itself. This is where Privy users switch billing behavior.
+              If <code>mode</code> is omitted, default is <code>developer-sponsored</code>.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -159,7 +161,12 @@ function PrivyGaslessButton() {
             </p>
             <p>
               For Privy flow, <code className="text-xs bg-white/5 px-1 py-0.5 rounded">mode</code> is set on each{' '}
-              <code className="text-xs bg-white/5 px-1 py-0.5 rounded">writeContract(...)</code> call.
+              <code className="text-xs bg-white/5 px-1 py-0.5 rounded">writeContract(...)</code> call, not on{' '}
+              <code className="text-xs bg-white/5 px-1 py-0.5 rounded">useSmoothSendPrivyWrite(...)</code>.
+            </p>
+            <p>
+              If you do not provide <code className="text-xs bg-white/5 px-1 py-0.5 rounded">mode</code>, SmoothSend
+              uses <code className="text-xs bg-white/5 px-1 py-0.5 rounded">developer-sponsored</code> by default.
             </p>
             <p>
               Owner/admin-gated contracts may need direct EOA writes if ownership is not set to the smart account.
