@@ -7,12 +7,12 @@ import { Breadcrumbs } from '@/components/breadcrumbs'
 export const metadata: Metadata = {
   title: 'Avalanche Quick Start (ERC-4337)',
   description:
-    'Integrate SmoothSend AVAX bundler in minutes. Use SmoothSendAvaxSubmitter and useSmoothSendAvax for developer-sponsored and user-pays-ERC20 flows via gateway.',
+    'Integrate SmoothSend AVAX bundler in minutes. Use SmoothSendAvaxClient for the simplest integration and useSmoothSendAvax for React flows.',
   keywords: [
     'smoothsend avalanche',
     'erc-4337 avalanche',
     'avax bundler integration',
-    'SmoothSendAvaxSubmitter',
+    'SmoothSendAvaxClient',
     'useSmoothSendAvax',
     'developer-sponsored gas',
     'user-pays-erc20',
@@ -92,7 +92,7 @@ export default function AvaxQuickStartPage() {
           <CardContent className="space-y-4">
             <CodeBlock
               language="typescript"
-              code={`import { SmoothSendAvaxSubmitter } from '@smoothsend/sdk/avax';`}
+              code={`import { createSmoothSendAvaxClient } from '@smoothsend/sdk/avax';`}
             />
             <p className="text-sm text-gray-400">
               Dependency setup lives in{' '}
@@ -106,38 +106,81 @@ export default function AvaxQuickStartPage() {
 
         <Card className="border-[#7595FF]/25 bg-[#7595FF]/[0.03]">
           <CardHeader>
-            <CardTitle>Backend (server / agent)</CardTitle>
+            <CardTitle>Backend (server / agent) — simplest path</CardTitle>
             <CardDescription>
-              One-shot flow: estimate gas → paymaster sign → send UserOperation.
+              High-level client that handles estimation, paymaster sign, and send.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <CodeBlock
               language="typescript"
-              filename="submit-sponsored-userop.ts"
+              filename="submit-call.ts"
               showLineNumbers
-              code={`import { SmoothSendAvaxSubmitter } from '@smoothsend/sdk/avax';
+              code={`import { createSmoothSendAvaxClient } from '@smoothsend/sdk/avax';
 
-const avax = new SmoothSendAvaxSubmitter({
+const avax = createSmoothSendAvaxClient({
   apiKey: process.env.SMOOTHSEND_API_KEY!, // sk_nogas_* on backend
   network: 'testnet', // fuji
 });
 
-const result = await avax.submitSponsoredUserOperation({
+const result = await avax.submitCall({
+  to: '0xYourTargetContract',
+  data: '0xYourEncodedCalldata',
+  value: 0n,
   mode: 'developer-sponsored', // or 'user-pays-erc20'
-  userOp: {
-    sender: smartAccountAddress,
-    nonce,
-    callData,
-    maxFeePerGas,
-    maxPriorityFeePerGas,
-  },
-  signUserOp: async (op) => signUserOpHash(op),
+  // optional if user already has smart account:
+  smartAccountAddress: '0xYourSmartAccount',
+  // optional when creating via factory path:
+  // accountFactory: { owner: '0xOwner', factoryAddress: '0xFactory' },
   waitForReceipt: false,
 });
 
 console.log(result.userOpHash);`}
             />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Fee preflight (user-pays-erc20)</CardTitle>
+            <CardDescription>
+              Quote before submit to show what token fee will be charged.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CodeBlock
+              language="typescript"
+              filename="estimate-fee.ts"
+              showLineNumbers
+              code={`const quote = await avax.estimateUserPaysFee({
+  to: '0xYourTargetContract',
+  data: '0xYourEncodedCalldata',
+  value: 0n,
+  paymaster: { token: '0xUSDC' },
+  smartAccountAddress: '0xYourSmartAccount',
+});
+
+console.log(quote.feePreview); // token + amount + usd + policy fields`}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Hash semantics</CardTitle>
+            <CardDescription>
+              UserOperation hash and on-chain transaction hash are different values.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm text-gray-300">
+            <p>
+              <code className="text-xs bg-white/5 px-1 py-0.5 rounded">userOpHash</code>: returned immediately by{' '}
+              <code className="text-xs bg-white/5 px-1 py-0.5 rounded">eth_sendUserOperation</code>.
+            </p>
+            <p>
+              <code className="text-xs bg-white/5 px-1 py-0.5 rounded">transactionHash</code>: available after inclusion from{' '}
+              <code className="text-xs bg-white/5 px-1 py-0.5 rounded">eth_getUserOperationReceipt</code>. Use this for explorer links.
+            </p>
           </CardContent>
         </Card>
 

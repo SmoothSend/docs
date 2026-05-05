@@ -7,16 +7,23 @@ import hljs from 'highlight.js/lib/core'
 import typescript from 'highlight.js/lib/languages/typescript'
 import bash from 'highlight.js/lib/languages/bash'
 import json from 'highlight.js/lib/languages/json'
+import xml from 'highlight.js/lib/languages/xml'
+import 'highlight.js/styles/github-dark.css'
 
 hljs.registerLanguage('typescript', typescript)
 hljs.registerLanguage('javascript', typescript)
+hljs.registerLanguage('tsx', typescript)
+hljs.registerLanguage('jsx', typescript)
 hljs.registerLanguage('bash', bash)
 hljs.registerLanguage('shell', bash)
 hljs.registerLanguage('json', json)
+hljs.registerLanguage('xml', xml)
 
 const LANG_LABELS: Record<string, string> = {
   typescript: 'TypeScript',
+  tsx: 'TypeScript (React)',
   javascript: 'JavaScript',
+  jsx: 'JavaScript (React)',
   bash: 'Terminal',
   shell: 'Terminal',
   json: 'JSON',

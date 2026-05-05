@@ -37,7 +37,7 @@ export default function AvaxInstallationPage() {
             <CodeBlock
               language="typescript"
               code={`// AVAX-only import path
-import { SmoothSendAvaxSubmitter } from '@smoothsend/sdk/avax';`}
+import { SmoothSendAvaxClient } from '@smoothsend/sdk/avax';`}
             />
           </CardContent>
         </Card>
@@ -95,4 +95,3 @@ sk_nogas_xxx`}
     </div>
   )
 }
-

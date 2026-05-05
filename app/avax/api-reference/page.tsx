@@ -7,7 +7,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs'
 export const metadata: Metadata = {
   title: 'AVAX API Reference',
   description:
-    'API reference for SmoothSend AVAX ERC-4337 SDK: SmoothSendAvaxSubmitter, useSmoothSendAvax, paymaster signing helpers, and viem utilities.',
+    'API reference for SmoothSend AVAX ERC-4337 SDK: SmoothSendAvaxClient, SmoothSendAvaxSubmitter, useSmoothSendAvax, and viem helpers.',
   alternates: {
     canonical: 'https://docs.smoothsend.xyz/avax/api-reference',
   },
@@ -33,6 +33,8 @@ export default function AvaxApiReferencePage() {
             <CodeBlock
               language="typescript"
               code={`import {
+  SmoothSendAvaxClient,
+  createSmoothSendAvaxClient,
   SmoothSendAvaxSubmitter,
   createSmoothSendAvaxSubmitter,
   SmoothSendAvaxProvider,
@@ -48,9 +50,42 @@ export default function AvaxApiReferencePage() {
 
         <Card className="border-[#7595FF]/25 bg-[#7595FF]/[0.03]">
           <CardHeader>
-            <CardTitle>SmoothSendAvaxSubmitter</CardTitle>
+            <CardTitle>SmoothSendAvaxClient</CardTitle>
             <CardDescription>
-              Core client for bundler JSON-RPC and paymaster signing.
+              Recommended high-level client for most integrations.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div>
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Constructor</h3>
+              <CodeBlock
+                language="typescript"
+                code={`createSmoothSendAvaxClient({
+  apiKey: string,
+  network?: 'testnet' | 'mainnet',
+  gatewayUrl?: string,
+  timeout?: number,
+  chain?: string,
+})`}
+              />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Key methods</h3>
+              <CodeBlock
+                language="typescript"
+                code={`submitCall(opts): Promise<{ userOpHash: string; receipt: UserOperationReceiptAvax | null; hashTypes?: { userOpHash: string; transactionHash?: string } }>
+submitCalls(opts): Promise<{ userOpHash: string; receipt: UserOperationReceiptAvax | null; hashTypes?: { userOpHash: string; transactionHash?: string } }>
+estimateUserPaysFee(opts): Promise<{ feePreview?: AvaxFeePreview; exchangeRate?: AvaxPaymasterSignResponse['exchangeRate'] }>`}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-[#7595FF]/25 bg-[#7595FF]/[0.03]">
+          <CardHeader>
+            <CardTitle>SmoothSendAvaxSubmitter (advanced)</CardTitle>
+            <CardDescription>
+              Low-level client for direct bundler JSON-RPC and paymaster operations.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
@@ -79,6 +114,7 @@ estimateUserOperationGas(userOp, entryPoint): Promise<GasEstimateAvax>
 sendUserOperation(userOp, entryPoint): Promise<string>
 getUserOperationReceipt(userOpHash): Promise<UserOperationReceiptAvax | null>
 paymasterSign(body): Promise<PaymasterSignResponseAvax>
+estimateUserPaysFee(input): Promise<{ feePreview?: AvaxFeePreview; exchangeRate?: AvaxPaymasterSignResponse['exchangeRate'] }>
 submitSponsoredUserOperation(opts): Promise<{ userOpHash: string; receipt: UserOperationReceiptAvax | null }>`}
               />
             </div>

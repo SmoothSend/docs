@@ -7,7 +7,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs'
 export const metadata: Metadata = {
   title: 'AVAX Examples',
   description:
-    'Copy-paste AVAX ERC-4337 integration examples for SmoothSend: backend sponsored flow, React submitCall flow, and atomic user-pays-ERC20 batch (approve + transfer in one UserOp).',
+    'Copy-paste AVAX ERC-4337 integration examples for SmoothSend: simple backend client flow, React submitCall flow, and atomic user-pays-ERC20 batch.',
   alternates: {
     canonical: 'https://docs.smoothsend.xyz/avax/examples',
   },
@@ -27,7 +27,7 @@ export default function AvaxExamplesPage() {
 
         <Card className="border-[#7595FF]/25 bg-[#7595FF]/[0.03]">
           <CardHeader>
-            <CardTitle>Example 1 — Backend sponsored submit</CardTitle>
+            <CardTitle>Example 1 — Backend submit (minimal)</CardTitle>
             <CardDescription>
               Server-side flow with <code className="text-xs bg-white/5 px-1 py-0.5 rounded">sk_nogas_*</code>.
             </CardDescription>
@@ -35,69 +35,25 @@ export default function AvaxExamplesPage() {
           <CardContent>
             <CodeBlock
               language="typescript"
-              filename="backend-sponsored.ts"
+              filename="backend-minimal.ts"
               showLineNumbers
-              code={`import {
-  SmoothSendAvaxSubmitter,
-  encodeAvaxExecuteCalldata,
-  hashUserOperationAvax,
-  readAvaxSenderNonce,
-} from '@smoothsend/sdk/avax';
-import { createPublicClient, createWalletClient, http, toHex } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
-import { avalancheFuji } from 'viem/chains';
+              code={`import { createSmoothSendAvaxClient } from '@smoothsend/sdk/avax';
 
-const publicClient = createPublicClient({
-  chain: avalancheFuji,
-  transport: http('https://api.avax-test.network/ext/bc/C/rpc'),
-});
-const account = privateKeyToAccount(process.env.SMART_ACCOUNT_OWNER_KEY as \`0x\${string}\`);
-const walletClient = createWalletClient({
-  account,
-  chain: avalancheFuji,
-  transport: http('https://api.avax-test.network/ext/bc/C/rpc'),
-});
-
-const avax = new SmoothSendAvaxSubmitter({
+const avax = createSmoothSendAvaxClient({
   apiKey: process.env.SMOOTHSEND_API_KEY!, // sk_nogas_*
   network: 'testnet',
 });
 
-const entryPoint = (await avax.getSupportedEntryPoints())[0] as \`0x\${string}\`;
-const sender = process.env.SMART_ACCOUNT_ADDRESS as \`0x\${string}\`;
-const nonce = await readAvaxSenderNonce({
-  publicClient,
-  entryPointAddress: entryPoint,
-  sender,
-});
-
-const callData = encodeAvaxExecuteCalldata(
-  '0x0000000000000000000000000000000000000001',
-  0n,
-  '0x'
-);
-
-const result = await avax.submitSponsoredUserOperation({
+const result = await avax.submitCall({
+  to: '0x0000000000000000000000000000000000000001',
+  data: '0x',
+  value: 0n,
   mode: 'developer-sponsored',
-  userOp: {
-    sender,
-    nonce: toHex(nonce),
-    callData,
-    maxFeePerGas: toHex(50n * 10n ** 9n),
-    maxPriorityFeePerGas: toHex(2n * 10n ** 9n),
-  },
-  signUserOp: async (op) => {
-    const hash = hashUserOperationAvax({
-      chainId: avalancheFuji.id,
-      entryPointAddress: entryPoint,
-      userOperation: op,
-    });
-    return walletClient.signMessage({ account, message: { raw: hash } });
-  },
+  smartAccountAddress: '0xYourSmartAccount',
   waitForReceipt: false,
 });
 
-console.log(result.userOpHash);`}
+console.log('userOpHash:', result.userOpHash);`}
             />
           </CardContent>
         </Card>
