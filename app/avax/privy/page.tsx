@@ -115,6 +115,33 @@ function PrivyGaslessButton() {
           </CardContent>
         </Card>
 
+        <Card>
+          <CardHeader>
+            <CardTitle>3) Use user-pays-erc20 mode (Privy)</CardTitle>
+            <CardDescription>
+              Set mode on the write call itself. This is where Privy users switch billing behavior.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CodeBlock
+              language="tsx"
+              filename="PrivyUserPays.tsx"
+              showLineNumbers
+              code={`await writeContract({
+  address: '0xYourContract',
+  abi: YOUR_ABI,
+  functionName: 'mint',
+  args: [1],
+  mode: 'user-pays-erc20', // put mode here (per transaction)
+  paymaster: {
+    token: '0xYourErc20Token',
+    receiver: '0xYourTreasuryAddress',
+  },
+});`}
+            />
+          </CardContent>
+        </Card>
+
         <Card className="border-[#7595FF]/25 bg-[#7595FF]/[0.03]">
           <CardHeader>
             <CardTitle>Notes</CardTitle>
@@ -129,6 +156,10 @@ function PrivyGaslessButton() {
             <p>
               Ensure <code className="text-xs bg-white/5 px-1 py-0.5 rounded">ownerAddress</code> matches the exact
               Privy wallet used to sign.
+            </p>
+            <p>
+              For Privy flow, <code className="text-xs bg-white/5 px-1 py-0.5 rounded">mode</code> is set on each{' '}
+              <code className="text-xs bg-white/5 px-1 py-0.5 rounded">writeContract(...)</code> call.
             </p>
             <p>
               Owner/admin-gated contracts may need direct EOA writes if ownership is not set to the smart account.
