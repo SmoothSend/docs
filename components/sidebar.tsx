@@ -42,6 +42,7 @@ const sidebarItems: NavItem[] = [
     children: [
       { href: '/aptos/installation', label: 'Installation' },
       { href: '/aptos/quickstart', label: 'Quick Start' },
+      { href: '/aptos/privy', label: 'Privy Integration' },
       { href: '/aptos/api-reference', label: 'API Reference' },
       { href: '/aptos/sponsorship-rules', label: 'Sponsorship Rules' },
       { href: '/aptos/examples', label: 'Examples' },
