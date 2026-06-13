@@ -198,6 +198,10 @@ export function AtomicUSDCTransfer({ recipient }: { recipient: \`0x\${string}\` 
               <code className="text-xs bg-white/5 px-1 py-0.5 rounded">fetchAvaxAaPublicDefaults()</code>, you ensure
               the correct Paymaster address is always used for the approval step.
             </p>
+            <p className="text-sm text-gray-400">
+              Use the new <code>getSmartAccountAddress</code> helper (or the <code>smartAccountAddress</code> returned 
+              by <code>useSmoothSendAvax</code>) to easily display the user’s gasless SCW address for funding.
+            </p>
           </CardContent>
         </Card>
 

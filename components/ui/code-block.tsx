@@ -139,7 +139,7 @@ export function CodeBlock({
                 )}
               >
                 {showLineNumbers && (
-                  <span className="select-none w-8 shrink-0 text-right mr-5 text-[#3a3d55] text-xs leading-[1.7]">
+                  <span className="select-none w-8 shrink-0 text-right mr-5 text-[#5a5d75] text-xs leading-[1.7]">
                     {lineNum}
                   </span>
                 )}

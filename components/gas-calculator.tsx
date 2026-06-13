@@ -4,6 +4,9 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import { ChevronDown, TrendingDown, Info, RefreshCw, ExternalLink, BookOpen, Zap, Coins, FileCode2, GitMerge } from "lucide-react"
 
+// ─── Chain support ──────────────────────────────────────────────────────────
+// type Chain = 'aptos' | 'avax'  (kept for future use, currently inferred)
+
 // ─── Aptos gas model constants (post AIP-141: 10x gas increase) ──────────────
 const PAYLOAD_BASE_GAS = 15_000_000  // base internal gas for any payload
 const PAYLOAD_BYTE_GAS = 20_000      // extra internal gas per byte above cutoff
@@ -12,11 +15,20 @@ const SCALING_FACTOR = 1_000_000     // internal → external gas divisor
 const OCTAS_PER_APT = 100_000_000    // 1 APT = 10^8 octas
 
 // ─── Transaction presets (post AIP-141 10x gas increase) ─────────────────────
-const PRESETS = [
+const APTOS_PRESETS = [
   { id: "transfer", label: "APT Transfer",  Icon: Zap,       gasUsed: 70,     instructionGas: 35_000_000,   storageGas: 20_000_000,   payloadBytes: 100 },
   { id: "token",    label: "Token Transfer", Icon: Coins,     gasUsed: 240,    instructionGas: 120_000_000,  storageGas: 105_000_000,  payloadBytes: 200 },
   { id: "contract", label: "Contract Call",  Icon: FileCode2, gasUsed: 2_000,  instructionGas: 800_000_000,  storageGas: 600_000_000,  payloadBytes: 400 },
   { id: "defi",     label: "DeFi / Complex", Icon: GitMerge,  gasUsed: 10_000, instructionGas: 4_000_000_000, storageGas: 3_000_000_000, payloadBytes: 800 },
+]
+
+// ─── Avalanche (ERC-4337 UserOp) presets ──────────────────────────────────────
+// Gas figures are realistic total gas for a full UserOperation (including AA overhead)
+const AVAX_PRESETS = [
+  { id: "call",   label: "Simple Call",     Icon: Zap,       gasUsed: 280_000 },
+  { id: "erc20",  label: "ERC20 Transfer",  Icon: Coins,     gasUsed: 420_000 },
+  { id: "swap",   label: "DEX Swap",        Icon: GitMerge,  gasUsed: 750_000 },
+  { id: "batch",  label: "Batch / Complex", Icon: FileCode2, gasUsed: 1_200_000 },
 ]
 
 const VOLUME_STEPS = [100, 500, 1_000, 5_000, 10_000, 50_000, 100_000]
@@ -108,16 +120,25 @@ function Step({ n, children }: { n: number; children: React.ReactNode }) {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export function GasCalculator({ compact = false }: { compact?: boolean }) {
+  const [chain, setChain] = React.useState<'aptos' | 'avax'>('aptos')
   const [mode, setMode]         = React.useState<"explorer" | "breakdown">("explorer")
   const [selectedPreset, setSelectedPreset] = React.useState<string | null>("transfer")
   const [showFormula, setShowFormula]       = React.useState(false)
   const [showGuide, setShowGuide]           = React.useState(false)
 
-  // APT price state
+  // Billing mode for AVAX (sponsored = credits, user-pays = 0 credits for dev)
+  const [billingMode, setBillingMode] = React.useState<'sponsored' | 'user-pays'>('sponsored')
+
+  // Price states
   const [aptPriceUSD, setAptPriceUSD]     = React.useState(10)
   const [aptPriceStatus, setAptPriceStatus] = React.useState<"loading" | "live" | "manual" | "error">("loading")
   const [aptUpdatedAt, setAptUpdatedAt]   = React.useState<string | null>(null)
   const [aptManualOverride, setAptManualOverride] = React.useState(false)
+
+  const [avaxPriceUSD, setAvaxPriceUSD]     = React.useState(35)
+  const [avaxPriceStatus, setAvaxPriceStatus] = React.useState<"loading" | "live" | "manual" | "error">("loading")
+  const [avaxUpdatedAt, setAvaxUpdatedAt]   = React.useState<string | null>(null)
+  const [avaxManualOverride, setAvaxManualOverride] = React.useState(false)
 
   // Explorer mode inputs
   const [gasUsed, setGasUsed]           = React.useState(7)
@@ -132,7 +153,7 @@ export function GasCalculator({ compact = false }: { compact?: boolean }) {
   // Volume
   const [volumeIdx, setVolumeIdx] = React.useState(2)
 
-  // ── Live APT price (CoinGecko free API) ──────────────────────────────────────
+  // ── Live prices (CoinGecko free API) ────────────────────────────────────────
   const fetchAptPrice = React.useCallback(async () => {
     if (aptManualOverride) return
     setAptPriceStatus("loading")
@@ -156,48 +177,107 @@ export function GasCalculator({ compact = false }: { compact?: boolean }) {
     }
   }, [aptManualOverride])
 
+  const fetchAvaxPrice = React.useCallback(async () => {
+    if (avaxManualOverride) return
+    setAvaxPriceStatus("loading")
+    try {
+      const res = await fetch(
+        "https://api.coingecko.com/api/v3/simple/price?ids=avalanche-2&vs_currencies=usd",
+        { cache: "no-store" }
+      )
+      if (!res.ok) throw new Error("API error")
+      const data = await res.json() as { 'avalanche-2'?: { usd?: number } }
+      const price = data?.['avalanche-2']?.usd
+      if (typeof price === "number" && price > 0) {
+        setAvaxPriceUSD(Math.round(price * 100) / 100)
+        setAvaxPriceStatus("live")
+        setAvaxUpdatedAt(new Date().toLocaleTimeString())
+      } else {
+        throw new Error("Invalid data")
+      }
+    } catch {
+      setAvaxPriceStatus("error")
+    }
+  }, [avaxManualOverride])
+
   React.useEffect(() => {
     fetchAptPrice()
-    // Refresh price every 60 seconds
-    const interval = setInterval(fetchAptPrice, 60_000)
+    fetchAvaxPrice()
+    // Refresh prices every 60 seconds
+    const interval = setInterval(() => {
+      fetchAptPrice()
+      fetchAvaxPrice()
+    }, 60_000)
     return () => clearInterval(interval)
-  }, [fetchAptPrice])
+  }, [fetchAptPrice, fetchAvaxPrice])
 
-  // ── Calculations ─────────────────────────────────────────────────────────────
-  let externalGasUnits: number
-  let feeOctas: number
+  // ── Calculations (chain aware) ───────────────────────────────────────────────
+  let feeUSD: number
+  let networkFeeLabel: string
+  let userPaysLabel: string
 
-  if (mode === "explorer") {
-    externalGasUnits = gasUsed
-    feeOctas = gasUsed * gasUnitPrice
+  const currentPrice = chain === 'aptos' ? aptPriceUSD : avaxPriceUSD
+
+  let feeAPT: number | undefined
+  let feeOctas: number | undefined
+
+  if (chain === 'aptos') {
+    let externalGasUnits: number
+
+    if (mode === "explorer") {
+      externalGasUnits = gasUsed
+      feeOctas = gasUsed * gasUnitPrice
+    } else {
+      const payloadExtra  = Math.max(0, (payloadBytes - PAYLOAD_LARGE_CUT) * PAYLOAD_BYTE_GAS)
+      const totalInternal = instructionGas + storageGas + PAYLOAD_BASE_GAS + payloadExtra
+      externalGasUnits    = totalInternal / SCALING_FACTOR
+      feeOctas            = Math.ceil(externalGasUnits) * breakdownPrice
+    }
+
+    feeAPT = feeOctas / OCTAS_PER_APT
+    feeUSD = feeAPT * currentPrice
+    networkFeeLabel = aptFmt(feeAPT)
+    userPaysLabel = "$0.00"
   } else {
-    const payloadExtra  = Math.max(0, (payloadBytes - PAYLOAD_LARGE_CUT) * PAYLOAD_BYTE_GAS)
-    const totalInternal = instructionGas + storageGas + PAYLOAD_BASE_GAS + payloadExtra
-    externalGasUnits    = totalInternal / SCALING_FACTOR
-    feeOctas            = Math.ceil(externalGasUnits) * breakdownPrice
+    // AVAX EVM / ERC-4337 model
+    const effectiveGas = gasUsed // total gas units for the UserOp
+    const effectiveGasPrice = gasUnitPrice // gwei (re-using the explorer input field for simplicity)
+    const gasCostAVAX = (effectiveGas * effectiveGasPrice) / 1_000_000_000
+    feeUSD = gasCostAVAX * currentPrice
+    networkFeeLabel = `${gasCostAVAX.toFixed(6)} AVAX`
+    userPaysLabel = billingMode === 'user-pays' ? usdFmt(feeUSD * 1.15) + " USDC (est.)" : "$0.00"
   }
 
-  const feeAPT        = feeOctas / OCTAS_PER_APT
-  const feeUSD        = feeAPT * aptPriceUSD
-  const smoothSendFee = Math.max(feeUSD * 1.5, 0.01) // max(1.5×, $0.01 min)
+  // Apply billing mode for AVAX user-pays (dev pays nothing)
+  const effectiveSmoothSendFee = (chain === 'avax' && billingMode === 'user-pays')
+    ? 0
+    : Math.max(feeUSD * 1.5, 0.01)
+
   const volume        = VOLUME_STEPS[volumeIdx]
-  const monthlyCredits     = smoothSendFee * volume
+  const monthlyCredits     = effectiveSmoothSendFee * volume
   const monthlyUserSavings = feeUSD * volume
   const pct               = (volumeIdx / (VOLUME_STEPS.length - 1)) * 100
 
+  const activePresets = chain === 'aptos' ? APTOS_PRESETS : AVAX_PRESETS
+
   // ── Preset helpers ────────────────────────────────────────────────────────────
   function applyPreset(id: string) {
-    const p = PRESETS.find((x) => x.id === id)
+    const p = activePresets.find((x) => x.id === id) as { id: string; label: string; Icon: React.ComponentType; gasUsed: number; instructionGas?: number; storageGas?: number; payloadBytes?: number }
     if (!p) return
     setSelectedPreset(id)
-    if (mode === "explorer") setGasUsed(p.gasUsed)
-    else { setInstructionGas(p.instructionGas); setStorageGas(p.storageGas); setPayloadBytes(p.payloadBytes) }
+    if (chain === 'avax') {
+      setGasUsed(p.gasUsed)
+      // For AVAX we use gasUsed as total UserOp gas; gas price stays in the input
+    } else {
+      if (mode === "explorer") setGasUsed(p.gasUsed)
+      else { setInstructionGas(p.instructionGas!); setStorageGas(p.storageGas!); setPayloadBytes(p.payloadBytes!) }
+    }
   }
 
   function switchMode(m: "explorer" | "breakdown") {
     setMode(m)
-    if (selectedPreset) {
-      const p = PRESETS.find((x) => x.id === selectedPreset)
+    if (selectedPreset && chain === 'aptos') {
+      const p = APTOS_PRESETS.find((x) => x.id === selectedPreset)
       if (p) {
         if (m === "explorer") setGasUsed(p.gasUsed)
         else { setInstructionGas(p.instructionGas); setStorageGas(p.storageGas); setPayloadBytes(p.payloadBytes) }
@@ -382,6 +462,65 @@ export function GasCalculator({ compact = false }: { compact?: boolean }) {
         </div>
       </div>
 
+        {/* AVAX price (only shown for Avalanche) — actual $ input */}
+      {chain === 'avax' && (
+        <div className="flex items-center gap-3">
+          <div className="flex flex-col items-end gap-0.5">
+            <div className="flex items-center gap-1.5">
+              {avaxPriceStatus === "loading" && (
+                <RefreshCw className="w-3 h-3 text-gray-500 animate-spin" />
+              )}
+              {avaxPriceStatus === "live" && (
+                <span className="flex items-center gap-1 text-[10px] font-medium text-green-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                  Live
+                </span>
+              )}
+              {avaxPriceStatus === "error" && (
+                <span className="text-[10px] text-yellow-500">manual</span>
+              )}
+              {avaxPriceStatus === "manual" && (
+                <span className="text-[10px] text-gray-500">manual</span>
+              )}
+              <span className="text-xs text-gray-500 uppercase tracking-widest font-medium">AVAX price</span>
+            </div>
+            {avaxUpdatedAt && avaxPriceStatus === "live" && (
+              <span className="text-[10px] text-gray-600">updated {avaxUpdatedAt}</span>
+            )}
+          </div>
+
+          <div className="relative w-28">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 font-mono">$</span>
+            <input
+              type="text"
+              inputMode="decimal"
+              value={avaxPriceUSD}
+              onChange={(e) => {
+                const n = parseFloat(e.target.value)
+                if (!isNaN(n) && n > 0) {
+                  setAvaxPriceUSD(n)
+                  setAvaxManualOverride(true)
+                  setAvaxPriceStatus("manual")
+                }
+              }}
+              className="w-full rounded-lg pl-6 pr-3 py-2 text-sm font-mono bg-white/[0.04] border border-white/[0.08] text-white focus:outline-none focus:border-[#7595FF]/50 focus:ring-1 focus:ring-[#7595FF]/30 transition-colors"
+            />
+          </div>
+
+          {avaxManualOverride && (
+            <button
+              onClick={() => {
+                setAvaxManualOverride(false)
+                fetchAvaxPrice()
+              }}
+              className="text-[11px] text-[#7595FF] hover:underline whitespace-nowrap"
+            >
+              Use live
+            </button>
+          )}
+        </div>
+      )}
+
       {/* ── Context banner ────────────────────────────────────────────────── */}
       <div className="flex items-start gap-2.5 p-3.5 rounded-lg bg-white/[0.03] border border-white/[0.06]">
         <Info className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" />
@@ -394,9 +533,26 @@ export function GasCalculator({ compact = false }: { compact?: boolean }) {
 
       {/* ── Presets ───────────────────────────────────────────────────────── */}
       <div>
-        <p className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-3">Quick presets</p>
+        {/* Chain selector (new for AVAX) */}
+      <div className="mb-3 flex items-center gap-2">
+        <span className="text-xs uppercase tracking-widest text-gray-500">Chain</span>
+        <div className="inline-flex rounded-md border border-white/[0.1] overflow-hidden text-sm">
+          <button onClick={() => { setChain('aptos'); setSelectedPreset('transfer') }} className={cn("px-3 py-1", chain === 'aptos' ? "bg-[#7595FF] text-white" : "hover:bg-white/5")}>Aptos</button>
+          <button onClick={() => { setChain('avax'); setSelectedPreset('call') }} className={cn("px-3 py-1", chain === 'avax' ? "bg-[#7595FF] text-white" : "hover:bg-white/5")}>Avalanche</button>
+        </div>
+
+        {chain === 'avax' && (
+          <div className="ml-3 flex items-center gap-1 text-xs">
+            <span className="text-gray-500">Mode:</span>
+            <button onClick={() => setBillingMode('sponsored')} className={cn("px-2 py-0.5 rounded", billingMode === 'sponsored' ? "bg-white/10" : "text-gray-400")}>Sponsored</button>
+            <button onClick={() => setBillingMode('user-pays')} className={cn("px-2 py-0.5 rounded", billingMode === 'user-pays' ? "bg-white/10" : "text-gray-400")}>User-pays ERC20</button>
+          </div>
+        )}
+      </div>
+
+      <p className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-3">Quick presets</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {PRESETS.map(({ id, label, Icon }) => (
+          {activePresets.map(({ id, label, Icon }) => (
             <button
               key={id}
               onClick={() => applyPreset(id)}
@@ -414,7 +570,7 @@ export function GasCalculator({ compact = false }: { compact?: boolean }) {
         </div>
       </div>
 
-      {/* ── Inputs: Explorer mode ─────────────────────────────────────────── */}
+      {/* ── Inputs: Explorer mode (labels adapt to chain) ───────────────────── */}
       {mode === "explorer" && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <NumField
@@ -422,16 +578,20 @@ export function GasCalculator({ compact = false }: { compact?: boolean }) {
             suffix="units"
             value={gasUsed}
             onChange={(n) => { setGasUsed(n); setSelectedPreset(null) }}
-            placeholder="7"
-            hint='The "gas_used" field from Aptos Explorer — run one test tx to find this'
+            placeholder={chain === 'avax' ? "280000" : "7"}
+            hint={chain === 'avax' 
+              ? 'Total gas for the UserOperation (call + verification + paymaster overhead)' 
+              : 'The "gas_used" field from Aptos Explorer — run one test tx to find this'}
           />
           <NumField
-            label="Gas Unit Price"
-            suffix="octas"
+            label={chain === 'avax' ? "Gas Price" : "Gas Unit Price"}
+            suffix={chain === 'avax' ? "gwei" : "octas"}
             value={gasUnitPrice}
             onChange={setGasUnitPrice}
-            placeholder="100"
-            hint='"gas_unit_price" on Explorer. Default network minimum is 100 octas/unit'
+            placeholder={chain === 'avax' ? "25" : "100"}
+            hint={chain === 'avax' 
+              ? 'Current gas price (gwei). Use 20-50 for testnet, higher for mainnet congestion.' 
+              : '"gas_unit_price" on Explorer. Default network minimum is 100 octas/unit'}
           />
         </div>
       )}
@@ -481,20 +641,21 @@ export function GasCalculator({ compact = false }: { compact?: boolean }) {
         <p className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-3">Per transaction</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <ResultTile
-            label="Network gas fee"
-            main={aptFmt(feeAPT)}
-            sub={`${feeOctas.toFixed(0)} octas · ${usdFmt(feeUSD, 6)}`}
+            label={chain === 'avax' ? "Network gas (AVAX)" : "Network gas fee"}
+            main={chain === 'avax' ? networkFeeLabel : (feeAPT != null ? aptFmt(feeAPT) : '—')}
+            sub={`${usdFmt(feeUSD, 6)}`}
           />
           <ResultTile
-            label="SmoothSend fee"
-            main={usdFmt(smoothSendFee)}
-            sub={smoothSendFee === 0.01 ? "minimum fee applied" : "from credits balance"}
-            accent
+            label="SmoothSend fee (dev)"
+            main={usdFmt(effectiveSmoothSendFee)}
+            sub={effectiveSmoothSendFee === 0 ? (chain === 'avax' && billingMode === 'user-pays' ? "user pays in ERC20" : "minimum applied") : "from credits balance"}
+            accent={effectiveSmoothSendFee > 0}
+            green={effectiveSmoothSendFee === 0}
           />
           <ResultTile
-            label="User pays gas"
-            main="$0.00"
-            sub="relayer covers 100%"
+            label={chain === 'avax' && billingMode === 'user-pays' ? "User pays (ERC20)" : "User pays gas"}
+            main={chain === 'avax' && billingMode === 'user-pays' ? userPaysLabel : "$0.00"}
+            sub={chain === 'avax' && billingMode === 'user-pays' ? "token fee to paymaster" : "relayer covers 100%"}
             green
           />
         </div>
@@ -534,7 +695,7 @@ export function GasCalculator({ compact = false }: { compact?: boolean }) {
             <p className="text-3xl font-bold text-[#7595FF] tabular-nums">
               {monthlyCredits >= 1_000 ? `$${(monthlyCredits / 1_000).toFixed(1)}k` : usdFmt(monthlyCredits)}
             </p>
-            <p className="text-xs text-gray-500 mt-1">{usdFmt(smoothSendFee)} × {volume.toLocaleString()} transactions</p>
+            <p className="text-xs text-gray-500 mt-1">{usdFmt(effectiveSmoothSendFee)} × {volume.toLocaleString()} transactions</p>
           </div>
           <div className="glass-card rounded-xl p-5 border-green-500/15 bg-green-500/[0.04]">
             <div className="flex items-center gap-1.5 mb-1">
@@ -570,7 +731,7 @@ export function GasCalculator({ compact = false }: { compact?: boolean }) {
                   <p><span className="text-[#f1fa8c]">fee_usd</span>         = fee_apt × apt_price_usd</p>
                   <p><span className="text-[#7595FF]">smoothsend_fee</span>  = max(fee_usd × 1.5,  $0.01)</p>
                 </div>
-                <p>Your values: <span className="text-white font-mono">{gasUsed} × {gasUnitPrice} = {(gasUsed * gasUnitPrice).toLocaleString()} octas = {aptFmt(feeAPT)} = {usdFmt(feeUSD, 6)}</span></p>
+                <p>Your values: <span className="text-white font-mono">{gasUsed} × {gasUnitPrice} = {(gasUsed * gasUnitPrice).toLocaleString()} octas = {feeAPT != null ? aptFmt(feeAPT) : '—'} = {usdFmt(feeUSD, 6)}</span></p>
               </div>
             ) : (
               <div className="space-y-2">

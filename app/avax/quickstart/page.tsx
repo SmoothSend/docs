@@ -144,7 +144,8 @@ export default function AvaxQuickStartPage() {
                   <tr className="border-b border-border text-left text-gray-400">
                     <th className="pb-3 pr-6 font-medium">Mode</th>
                     <th className="pb-3 pr-6 font-medium">Gas payer</th>
-                    <th className="pb-3 font-medium">User pays</th>
+                    <th className="pb-3 pr-6 font-medium">User pays</th>
+                    <th className="pb-3 font-medium">Developer credits</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40">
@@ -152,11 +153,13 @@ export default function AvaxQuickStartPage() {
                     <td className="py-3 pr-6 font-medium text-[#7595FF]">developer-sponsored</td>
                     <td className="py-3 pr-6 text-gray-300">SmoothSend paymaster</td>
                     <td className="py-3 text-gray-300">Nothing</td>
+                    <td className="py-3 text-gray-300">Charged (MAX(gas × 1.5, $0.01))</td>
                   </tr>
                   <tr>
                     <td className="py-3 pr-6 font-medium text-[#06b6d4]">user-pays-erc20</td>
                     <td className="py-3 pr-6 text-gray-300">SmoothSend paymaster</td>
-                    <td className="py-3 text-gray-300">ERC20 (for launch: USDC)</td>
+                    <td className="py-3 text-gray-300">ERC20 (USDC/USDT)</td>
+                    <td className="py-3 text-emerald-400 font-medium">None (user-funded)</td>
                   </tr>
                 </tbody>
               </table>
@@ -167,6 +170,52 @@ export default function AvaxQuickStartPage() {
               If your contract uses owner checks tied to an EOA, keep those admin actions on direct wagmi
               writes (EOA path) or set ownership/admin roles to the smart account.
             </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-[#06b6d4]/30 bg-[#06b6d4]/[0.03]">
+          <CardHeader>
+            <CardTitle>Your user’s gasless address (SCW)</CardTitle>
+            <CardDescription>
+              Every user has a predictable Smart Contract Wallet (SCW). Show this address in your UI so users know
+              where to send USDC/USDT if they want to use the gasless (user-pays) flow.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <CodeBlock
+              language="typescript"
+              filename="get-scw-address.ts"
+              showLineNumbers
+              code={`import { getSmartAccountAddress } from '@smoothsend/sdk/avax';
+import { usePublicClient } from 'wagmi';
+
+const publicClient = usePublicClient();
+
+const scwAddress = await getSmartAccountAddress({
+  publicClient,
+  owner: userEoaAddress,
+  network: 'mainnet', // or 'testnet'
+});
+
+// Show this to the user:
+// "Your gasless wallet: 0x... — send USDC here to pay fees yourself"
+console.log(scwAddress);`}
+            />
+
+            <p className="text-sm text-gray-400">
+              The hooks also return it automatically:
+            </p>
+            <CodeBlock
+              language="tsx"
+              code={`const { smartAccountAddress } = useSmoothSendAvax({
+  publicClient,
+  walletClient,
+});
+
+{smartAccountAddress && (
+  <p>Gasless address: {smartAccountAddress}</p>
+)}`}
+            />
           </CardContent>
         </Card>
 
@@ -236,7 +285,8 @@ console.log(result.userOpHash);`}
           <CardHeader>
             <CardTitle>Fee preflight (user-pays-erc20)</CardTitle>
             <CardDescription>
-              Quote before submit to show what token fee will be charged.
+              Quote before submit to show what token fee will be charged to the user. 
+              In this mode the developer pays <strong>zero</strong> SmoothSend credits.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -375,23 +425,26 @@ import { usePublicClient, useWalletClient } from 'wagmi';
 function TransferButton({ to, data }: { to: \`0x\${string}\`; data: \`0x\${string}\` }) {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
-  const { submitCall } = useSmoothSendAvax({
+  const { submitCall, smartAccountAddress } = useSmoothSendAvax({
     publicClient,
     walletClient: walletClient ?? undefined,
   });
 
   return (
-    <button
-      onClick={() =>
-        submitCall({
-          to,
-          data,
-          mode: 'developer-sponsored',
-        })
-      }
-    >
-      Submit gasless call
-    </button>
+    <>
+      {smartAccountAddress && <p>Your gasless wallet: {smartAccountAddress}</p>}
+      <button
+        onClick={() =>
+          submitCall({
+            to,
+            data,
+            mode: 'developer-sponsored',
+          })
+        }
+      >
+        Submit gasless call
+      </button>
+    </>
   );
 }
 

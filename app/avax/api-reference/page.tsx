@@ -39,6 +39,7 @@ export default function AvaxApiReferencePage() {
   createSmoothSendAvaxSubmitter,
   SmoothSendAvaxProvider,
   useSmoothSendAvax,
+  getSmartAccountAddress,
   encodeAvaxExecuteCalldata,
   encodeAvaxExecuteBatchCalldata,
   hashUserOperationAvax,
@@ -178,10 +179,17 @@ submitSponsoredUserOperation(opts): Promise<{ userOpHash: string; receipt: UserO
             />
             <CodeBlock
               language="typescript"
-              code={`const { submitCall, submitSponsoredUserOp } = useSmoothSendAvax({
+              code={`const { 
+  submitCall, 
+  submitSponsoredUserOp, 
+  smartAccountAddress   // ← the user's gasless SCW address (very useful for UI)
+} = useSmoothSendAvax({
   publicClient,
   walletClient,
 });
+
+// Show the address to the user so they know where to fund for user-pays mode
+{smartAccountAddress && <p>Your gasless address: {smartAccountAddress}</p>}
 
 // Single call — encodes via execute(dest, value, func)
 await submitCall({ to, data, mode: 'developer-sponsored' });
@@ -203,28 +211,34 @@ await submitSponsoredUserOp({
           <CardHeader>
             <CardTitle>Helpers</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-gray-300">
-            <p>
+          <CardContent className="space-y-3 text-sm text-gray-200">
+            <p className="text-gray-200">
               <code className="text-xs bg-white/5 px-1 py-0.5 rounded">encodeAvaxExecuteCalldata(to, value, data)</code>
               : encodes a single smart account{' '}
               <code className="text-xs bg-white/5 px-1 py-0.5 rounded">execute</code> calldata.
             </p>
-            <p>
+            <p className="text-gray-200">
               <code className="text-xs bg-white/5 px-1 py-0.5 rounded">encodeAvaxExecuteBatchCalldata(dest[], value[], func[])</code>
               : encodes an{' '}
               <code className="text-xs bg-white/5 px-1 py-0.5 rounded">executeBatch</code> calldata for atomic
               multi-call UserOperations. All three arrays must be the same length.
             </p>
-            <p>
+            <p className="text-gray-200">
               <code className="text-xs bg-white/5 px-1 py-0.5 rounded">fetchAvaxAaPublicDefaults(gatewayUrl?)</code>
               : fetches the latest EntryPoint, SimpleAccountFactory, and Paymaster addresses for Fuji and Mainnet from
               the gateway. Use this to avoid hardcoding contract addresses in your app.
             </p>
-            <p>
+            <p className="text-gray-200">
+              <code className="text-xs bg-white/5 px-1 py-0.5 rounded">getSmartAccountAddress(&#123; publicClient, owner, network?, salt?, factory? &#125;)</code>
+              : the easiest way to get a user’s predictable Smart Contract Wallet (SCW) address. Internally fetches the
+              correct factory from the gateway and calls <code>predictSimpleAccountAddress</code>. Perfect for showing
+              users where to send USDC/USDT for the <code>user-pays-erc20</code> flow.
+            </p>
+            <p className="text-gray-200">
               <code className="text-xs bg-white/5 px-1 py-0.5 rounded">readAvaxSenderNonce(&#123; publicClient, entryPointAddress, sender &#125;)</code>
               : reads nonce from EntryPoint for a sender address.
             </p>
-            <p>
+            <p className="text-gray-200">
               <code className="text-xs bg-white/5 px-1 py-0.5 rounded">hashUserOperationAvax(&#123; chainId, entryPointAddress, userOperation &#125;)</code>
               : builds the EIP-4337 userOp hash for wallet signing.
             </p>

@@ -74,7 +74,7 @@ export function Navigation() {
             <Link
               href="https://dashboard.smoothsend.xyz"
               target="_blank"
-              className="hidden sm:inline-flex px-4 py-1.5 text-sm font-medium text-white bg-[#7595FF] rounded-lg hover:bg-[#5B7ADD] transition-colors"
+              className="hidden sm:inline-flex px-4 py-1.5 text-sm font-medium text-white bg-[#4A6ED8] rounded-lg hover:bg-[#3F5FC0] transition-colors"
             >
               Dashboard
             </Link>

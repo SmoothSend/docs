@@ -29,11 +29,11 @@ function BreadcrumbsInner() {
 
   return (
     <div className="flex items-center gap-2 text-sm mb-2">
-      <Link href="/" className="text-gray-500 hover:text-white transition-colors">
+      <Link href="/" className="text-gray-400 hover:text-white transition-colors">
         Documentation
       </Link>
-      <span className="text-gray-600">&gt;</span>
-      <span className="text-gray-300">{label}</span>
+      <span className="text-gray-500">&gt;</span>
+      <span className="text-gray-200">{label}</span>
     </div>
   )
 }

@@ -33,11 +33,11 @@ const FAQ_ITEMS = [
 
 export const metadata: Metadata = {
   title: 'Pricing & Billing',
-  description: 'SmoothSend credit-based pricing for gasless Aptos transactions. Testnet is always free. Mainnet from $0.01 per transaction. Script Composer has no credits — fee-in-token. Buy credit packages from $5.',
+  description: 'SmoothSend credit-based pricing for gasless transactions on Aptos and Avalanche. Testnet free. Mainnet from $0.01 (or user-pays in ERC20 on AVAX). Script Composer / AVAX user-pays has no developer credits. Buy packages from $5.',
   keywords: [
-    'smoothsend pricing', 'aptos gasless transaction cost', 'gas sponsorship price',
-    'smoothsend credits', 'aptos fee payer cost', 'gasless dapp pricing',
-    'smoothsend billing', 'aptos testnet free', 'credit packages blockchain',
+    'smoothsend pricing', 'aptos gasless transaction cost', 'avax gasless pricing',
+    'gas sponsorship price', 'smoothsend credits', 'user-pays-erc20 avax',
+    'smoothsend billing', 'aptos testnet free', 'avax erc-4337 cost',
     'script composer fee', 'how much does smoothsend cost',
   ],
   alternates: {
@@ -178,8 +178,8 @@ export default function BillingPage() {
               Real-Time Gas Calculator
             </CardTitle>
             <CardDescription>
-              Estimate your monthly cost and see how much gas your users save.
-              Toggle between billing methods to compare.
+              Estimate costs for Aptos (credits) and Avalanche (credits or user-pays in USDC/USDT).
+              Switch chains and billing modes to compare developer cost vs user cost.
             </CardDescription>
           </CardHeader>
           <CardContent>
